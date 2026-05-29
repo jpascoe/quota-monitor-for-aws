@@ -1,5 +1,11 @@
 # Quota Monitor for AWS
 
+**Important: This solution will retire in December 2026. Deployments (via CloudFormation or GitHub) will remain operational, but customers will assume responsibility for maintenance and API-related updates post-retirement.**
+
+**Customers can explore using [AWS Service Quotas](https://docs.aws.amazon.com/servicequotas/latest/userguide/intro.html) for proactive usage monitoring and automated management of your service quotas. [Service Quotas Automatic Management](https://docs.aws.amazon.com/servicequotas/latest/userguide/automatic-management.html) provides a fully AWS-managed alternative that covers the most common quota monitoring and alerting needs without requiring customer-managed infrastructure.**
+
+**Planning your migration: When transitioning to Automatic Management, note these key differences to ensure full coverage: it uses standardized AWS-defined thresholds (80% and 95%), focuses on resource quotas (not API rate limits), and supports a subset of services. To view supported quotas in your account, navigate to the [Automatic Management section](https://console.aws.amazon.com/servicequotas/home/amSettings) in the [Service Quotas console](https://console.aws.amazon.com/servicequotas/).**
+
 **[🚀Solution Landing Page](https://aws.amazon.com/solutions/implementations/quota-monitor/)** | **[🚧Feature request](https://github.com/aws-solutions/quota-monitor-for-aws/issues/new?assignees=&labels=feature-request%2C+enhancement&template=feature_request.md&title=)** | **[🐛Bug Report](https://github.com/aws-solutions/quota-monitor-for-aws/issues/new?assignees=&labels=bug%2C+triage&template=bug_report.md&title=)** | **[📜Documentation Improvement](https://github.com/aws-solutions/quota-monitor-for-aws/issues/new?assignees=&labels=document-update&template=documentation_improvements.md&title=)**
 
 _Note: For any relevant information outside the scope of this readme, please refer to the solution landing page and implementation guide._
