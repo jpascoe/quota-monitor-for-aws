@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.3.13] - 2026-07-24
+
+### Fixed
+
+- Updated dependencies to address [CVE-2026-13149](https://avd.aquasec.com/nvd/cve-2026-13149) (brace-expansion)
+- Updated dependencies to address [CVE-2026-45149](https://avd.aquasec.com/nvd/cve-2026-45149) (brace-expansion)
+- Updated dependencies to address [CVE-2026-13676](https://avd.aquasec.com/nvd/cve-2026-13676) (fast-uri)
+- Updated dependencies to address [CVE-2026-16221](https://avd.aquasec.com/nvd/cve-2026-16221) (fast-uri)
+- Updated dependencies to address [CVE-2026-13760](https://avd.aquasec.com/nvd/cve-2026-13760) (aws-cdk-lib)
+- Updated dependencies to address [CVE-2026-41907](https://avd.aquasec.com/nvd/cve-2026-41907) (uuid)
+- Updated dependencies to address [CVE-2026-53550](https://avd.aquasec.com/nvd/cve-2026-53550) (js-yaml)
+- Updated dependencies to address [CVE-2026-59869](https://avd.aquasec.com/nvd/cve-2026-59869) (js-yaml)
+- Updated dependencies to address [CVE-2026-8723](https://avd.aquasec.com/nvd/cve-2026-8723) (qs)
+- Updated dependencies to address [CVE-2026-49356](https://avd.aquasec.com/nvd/cve-2026-49356) (@babel/core)
+- Fixed metric stat recommendation override to exclude `CallCount` metrics from being overridden to `Maximum` - GitHub Issue [#274](https://github.com/aws-solutions/quota-monitor-for-aws/issues/274)
+
 ## [6.3.12] - 2026-05-14
 
 ### Fixed

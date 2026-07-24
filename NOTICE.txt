@@ -26,6 +26,9 @@ tslib under the 0BSD license.
 @aws-sdk/util-locate-window under the Apache-2.0 license.
 @aws-sdk/core under the Apache-2.0 license.
 @aws-sdk/xml-builder under the Apache-2.0 license.
+@nodable/entities under the MIT license.
+@aws/cloudformation-validate under the Apache-2.0 license.
+xml-naming under the MIT license.
 fast-xml-parser under the MIT license.
 fast-xml-builder under the MIT license.
 path-expression-matcher under the MIT license.
