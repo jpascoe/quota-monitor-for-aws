@@ -18,6 +18,7 @@ import { logger } from "./logger";
 
 export const metricStatRecommendationOverrides: { [key: string]: string } = {
   "L-D05C8A75": "Maximum",
+  "L-2D554821": "Maximum",
 };
 
 /**
@@ -405,9 +406,10 @@ export class ServiceQuotasHelper extends ServiceHelper<ServiceQuotasClient> {
     if (overrides) {
       return overrides;
     }
-    // Some newly added quotas which are clearly counts are configured with a default "Sum" stat, override it to "Maximum"
-    // eg aws service-quotas get-service-quota --service-code cost-optimization-hub --quota-code L-2D554821 --region us-east-1
-    if (metricName?.toLocaleLowerCase().endsWith("count")) {
+    // Some newly added quotas which are clearly gauge-style resource counts (e.g. MetricName "ResourceCount") are
+    // configured with a default "Sum" stat, override it to "Maximum" - but not for "CallCount".
+    // exeption cost-optimization-hub L-2D554821 is overriden in metricStatRecommendationOverrides above
+    if (metricName?.toLocaleLowerCase().endsWith("count") && metricName?.toLocaleLowerCase() !== "callcount") {
       return "Maximum";
     }
     return metricInfo.MetricStatisticRecommendation;

@@ -647,7 +647,47 @@ describe("Service Quotas Helper", () => {
       expect(percentageUsageQuery.Id).toEqual("emrserverless_vcpu_none_resource_ld05c8a75_pct_utilization");
       expect(usageQuery.MetricStat?.Stat).toEqual(metricStatRecommendationOverrides[quotaCode]);
     });
-    it("generate CW metric query for a quota with metric name ending in count", async () => {
+    it("generate CW metric query for a quota with overridden stat L-2D554821", async () => {
+      const quotaCode = "L-2D554821";
+      const quota: ServiceQuota = {
+        QuotaCode: quotaCode,
+        UsageMetric: {
+          MetricNamespace: "AWS/Usage",
+          MetricName: "CallCount",
+          MetricDimensions: {
+            Class: "None",
+            Resource: "ListEnrollmentStatuses",
+            Service: "CostOptimizationHub",
+            Type: "API",
+          },
+          MetricStatisticRecommendation: "Sum",
+        },
+      };
+      const cwQuery = (sqHelper as any).generateCWQuery(quota, 3600);
+      const usageQuery: MetricDataQuery = cwQuery[0];
+      expect(usageQuery.MetricStat?.Stat).toEqual("Maximum");
+    });
+    it("generate CW metric query for a quota with metric name ending in count but not CallCount", async () => {
+      const quotaCode = "MyQuota";
+      const quota: ServiceQuota = {
+        QuotaCode: quotaCode,
+        UsageMetric: {
+          MetricNamespace: "AWS/Usage",
+          MetricName: "ResourceCount",
+          MetricDimensions: {
+            Class: "None",
+            Resource: "SomeResource",
+            Service: "SomeService",
+            Type: "Resource",
+          },
+          MetricStatisticRecommendation: "Sum",
+        },
+      };
+      const cwQuery = (sqHelper as any).generateCWQuery(quota, 3600);
+      const usageQuery: MetricDataQuery = cwQuery[0];
+      expect(usageQuery.MetricStat?.Stat).toEqual("Maximum");
+    });
+    it("generate CW metric query for a CallCount metric should use original stat", async () => {
       const quotaCode = "MyQuota";
       const quota: ServiceQuota = {
         QuotaCode: quotaCode,
@@ -665,12 +705,7 @@ describe("Service Quotas Helper", () => {
       };
       const cwQuery = (sqHelper as any).generateCWQuery(quota, 3600);
       const usageQuery: MetricDataQuery = cwQuery[0];
-      const percentageUsageQuery: MetricDataQuery = cwQuery[1];
-      expect(usageQuery.Id).toEqual("costoptimizationhub_listenrollmentstatuses_none_api_myquota");
-      expect(percentageUsageQuery.Id).toEqual(
-        "costoptimizationhub_listenrollmentstatuses_none_api_myquota_pct_utilization"
-      );
-      expect(usageQuery.MetricStat?.Stat).toEqual("Maximum");
+      expect(usageQuery.MetricStat?.Stat).toEqual("Sum");
     });
   });
 });
