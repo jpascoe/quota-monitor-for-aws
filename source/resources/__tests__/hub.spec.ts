@@ -17,8 +17,8 @@ describe("==Hub Stack Tests==", () => {
   describe("hub stack resources", () => {
     TestsCommon.assertCommonHubResources(template);
 
-    it("should have SSM Parameters for SlackHook, OU, Accounts, Notification Configuration and Regions List", () => {
-      template.resourceCountIs("AWS::SSM::Parameter", 5);
+    it("should have SSM Parameters for notification, scope, region, and dashboard configuration", () => {
+      template.resourceCountIs("AWS::SSM::Parameter", 7);
       template.hasResource("AWS::SSM::Parameter", {
         Properties: {
           Description: "List of target Accounts",

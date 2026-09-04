@@ -48,6 +48,17 @@ read from `/QuotaMonitor/Dashboard/QuotaSummaryTable` in SSM Parameter Store.
 Cloudflare can proxy a DNS CNAME such as `quota-monitor` to the S3 website
 origin. The dashboard stack outputs the site URL, API URL, and Cognito IDs.
 
+### Organization collector assets
+
+Organization StackSet spokes load Lambda code and layers from an S3 bucket in
+the same Region as the target account. For a multi-Region Organization
+deployment, bootstrap the monitoring account in every monitored Region,
+publish the generated spoke assets to each regional CDK asset bucket, and grant
+only `s3:GetObject` to principals in the Organization. The `orgHub:deploy`
+workflow prepares region-aware spoke templates using
+`scripts/patch-spoke-template-assets.mjs`; it keeps the buckets private and
+uses the target Region at StackSet deployment time.
+
 #### Deployment scenarios:
 
 The solution follows hub-spoke model and supports different deployment scenarios
