@@ -6,6 +6,7 @@ export class QuotaMonitorDashboard extends Stack {
   constructor(scope: App, id: string, props?: StackProps) {
     super(scope, id, props);
     const tableName = ssm.StringParameter.valueForStringParameter(this, "/QuotaMonitor/Dashboard/QuotaSummaryTable");
+    const tableKeyArn = ssm.StringParameter.valueForStringParameter(this, "/QuotaMonitor/Dashboard/QuotaSummaryKeyArn");
     const allowedOrigin = new CfnParameter(this, "AllowedOrigin", { type: "String", default: "*", description: "Dashboard origin; replace * with the Cloudflare URL for production" });
     const site = new s3.Bucket(this, "DashboardSite", { websiteIndexDocument: "index.html", websiteErrorDocument: "index.html", blockPublicAccess: new s3.BlockPublicAccess({ blockPublicAcls: false, blockPublicPolicy: false, ignorePublicAcls: false, restrictPublicBuckets: false }), removalPolicy: RemovalPolicy.RETAIN, autoDeleteObjects: false });
     site.addToResourcePolicy(new iam.PolicyStatement({ actions: ["s3:GetObject"], resources: [site.arnForObjects("*")], principals: [new iam.AnyPrincipal()] }));
@@ -24,6 +25,7 @@ export class QuotaMonitorDashboard extends Stack {
     const apiRole = new iam.Role(this, "DashboardApiRole", { assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"), managedPolicies: [iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")] });
     NagSuppressions.addResourceSuppressions(apiRole, [{ id: "AwsSolutions-IAM4", reason: "AWS managed Lambda basic execution policy is the standard minimal logging policy for this function." }]);
     apiRole.addToPolicy(new iam.PolicyStatement({ actions: ["dynamodb:Scan", "dynamodb:Query", "dynamodb:GetItem"], resources: [dynamodb.Table.fromTableName(this, "QuotaTable", tableName).tableArn] }));
+    apiRole.addToPolicy(new iam.PolicyStatement({ actions: ["kms:Decrypt"], resources: [tableKeyArn] }));
     const api = new lambda.Function(this, "DashboardApi", { runtime: lambda.Runtime.NODEJS_24_X, handler: "index.handler", code: lambda.Code.fromAsset(path.join(__dirname, "../../lambda/services/dashboardApi/dist")), role: apiRole, timeout: Duration.seconds(30), environment: { QUOTA_TABLE: tableName, ALLOWED_ORIGIN: allowedOrigin.valueAsString } });
     const fnUrl = api.addFunctionUrl({ authType: lambda.FunctionUrlAuthType.AWS_IAM, cors: { allowedOrigins: [allowedOrigin.valueAsString], allowedMethods: [lambda.HttpMethod.GET], allowedHeaders: ["authorization", "content-type", "x-amz-date", "x-amz-security-token", "x-amz-content-sha256"] } });
     api.addPermission("DashboardUrlInvokePermission", { principal: new iam.AnyPrincipal(), action: "lambda:InvokeFunctionUrl", functionUrlAuthType: lambda.FunctionUrlAuthType.AWS_IAM });
