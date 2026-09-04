@@ -37,6 +37,17 @@ The architecture can be broken down into different components, few which are ins
 
 <img src="./architecture.png" width="750" height="350">
 
+### Quota dashboard
+
+The optional `quota-monitor-dashboard` CDK stack deploys a React dashboard to
+an S3 website bucket and exposes read-only quota data through an IAM-authorized
+Lambda Function URL. Cognito User Pool and Identity Pool credentials are used
+by the browser; the DynamoDB summary table remains private. The table name is
+read from `/QuotaMonitor/Dashboard/QuotaSummaryTable` in SSM Parameter Store.
+
+Cloudflare can proxy a DNS CNAME such as `quota-monitor` to the S3 website
+origin. The dashboard stack outputs the site URL, API URL, and Cognito IDs.
+
 #### Deployment scenarios:
 
 The solution follows hub-spoke model and supports different deployment scenarios

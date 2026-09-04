@@ -1,5 +1,6 @@
 **/node_modules
 **/dist
+frontend/dist
 **/layer
 **/open-source
 **/.zip
@@ -11,6 +12,7 @@
 **/global-s3-assets
 **/regional-s3-assets
 **/npm-debug.log
+**/*.tsbuildinfo
 **/test-report.xml
 .scannerwork
 internal/scripts/redpencil
@@ -32,3 +34,8 @@ git-info
 
 # Patch release secrets
 .env
+**/.env.*
+
+# Local agent guidance and skills
+AGENTS.md
+.agents/

@@ -9,6 +9,7 @@ import { QuotaMonitorTASpoke } from "../lib/ta-spoke.stack";
 import { QuotaMonitorSQSpoke } from "../lib/sq-spoke.stack";
 import { QuotaMonitorHubNoOU } from "../lib/hub-no-ou.stack";
 import { QuotaMonitorSnsSpoke } from "../lib/sns-spoke-stack";
+import { QuotaMonitorDashboard } from "../lib/dashboard.stack";
 
 function addAppStacks(app: App): void {
   /**
@@ -52,6 +53,8 @@ function addAppStacks(app: App): void {
     synthesizer,
     analyticsReporting: false,
   });
+
+  new QuotaMonitorDashboard(app, "quota-monitor-dashboard", { synthesizer });
 }
 
 function main(): void {

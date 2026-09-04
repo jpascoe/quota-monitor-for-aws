@@ -521,6 +521,7 @@ export class QuotaMonitorHub extends Stack {
       encryptionKey: kms.key,
       timeToLiveAttribute: "ExpiryTime",
     });
+    new ssm.StringParameter(this, "QM-DashboardQuotaTable", { parameterName: "/QuotaMonitor/Dashboard/QuotaSummaryTable", stringValue: summaryTable.tableName, description: "Hub quota summary table name for the authenticated dashboard API" });
 
     /**
      * @description event-lambda construct for capturing quota summary
