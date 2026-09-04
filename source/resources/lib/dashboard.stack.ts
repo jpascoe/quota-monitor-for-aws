@@ -20,7 +20,7 @@ export class QuotaMonitorDashboard extends Stack {
     const client = userPool.addClient("DashboardClient", { authFlows: { userSrp: true, userPassword: true } });
     const identityPool = new cognito.CfnIdentityPool(this, "DashboardIdentityPool", { allowUnauthenticatedIdentities: false, cognitoIdentityProviders: [{ clientId: client.userPoolClientId, providerName: userPool.userPoolProviderName }] });
     const authenticatedRole = new iam.Role(this, "DashboardAuthenticatedRole", { assumedBy: new iam.FederatedPrincipal("cognito-identity.amazonaws.com", { "StringEquals": { "cognito-identity.amazonaws.com:aud": identityPool.ref }, "ForAnyValue:StringLike": { "cognito-identity.amazonaws.com:amr": "authenticated" } }, "sts:AssumeRoleWithWebIdentity") });
-    authenticatedRole.addToPolicy(new iam.PolicyStatement({ actions: ["lambda:InvokeFunctionUrl"], resources: ["*"] }));
+    authenticatedRole.addToPolicy(new iam.PolicyStatement({ actions: ["lambda:InvokeFunctionUrl", "lambda:InvokeFunction"], resources: ["*"] }));
     const apiRole = new iam.Role(this, "DashboardApiRole", { assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"), managedPolicies: [iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")] });
     NagSuppressions.addResourceSuppressions(apiRole, [{ id: "AwsSolutions-IAM4", reason: "AWS managed Lambda basic execution policy is the standard minimal logging policy for this function." }]);
     apiRole.addToPolicy(new iam.PolicyStatement({ actions: ["dynamodb:Scan", "dynamodb:Query", "dynamodb:GetItem"], resources: [dynamodb.Table.fromTableName(this, "QuotaTable", tableName).tableArn] }));
