@@ -4,11 +4,10 @@ import { DynamoDBDocumentClient, ScanCommand, QueryCommand } from "@aws-sdk/lib-
 
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const table = process.env.QUOTA_TABLE!;
-const cors = { "access-control-allow-origin": process.env.ALLOWED_ORIGIN ?? "", "access-control-allow-headers": "content-type,authorization", "access-control-allow-methods": "GET,OPTIONS" };
 type Item = Record<string, unknown>;
 const number = (v: unknown) => Number(v ?? 0);
 const normalize = (x: Item) => { const current = number(x.CurrentUsage), limit = number(x.LimitAmount), percent = limit ? current / limit * 100 : 0; return { quotaId: `${x.AccountId ?? ""}:${x.Region ?? ""}:${x.Service ?? ""}:${x.LimitCode ?? x.LimitName ?? ""}`, accountId: x.AccountId ?? "", region: x.Region ?? "", serviceCode: x.Service ?? "", quotaName: x.LimitName ?? "", quotaCode: x.LimitCode ?? "", currentUtilization: current, quotaValue: limit, utilizationPercent: percent, status: String(x.Status ?? (percent >= 95 ? "ERROR" : percent >= 80 ? "WARN" : "OK")), timestamp: x.TimeStamp ?? "", source: x.Source ?? "" }; };
-const response = (statusCode: number, body: unknown): APIGatewayProxyResultV2 => ({ statusCode, headers: { ...cors, "content-type": "application/json" }, body: JSON.stringify(body) });
+const response = (statusCode: number, body: unknown): APIGatewayProxyResultV2 => ({ statusCode, headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
 export const handler: LambdaFunctionURLHandler = async (event) => {
   if (event.requestContext.http.method === "OPTIONS") return response(204, "");
   try {
