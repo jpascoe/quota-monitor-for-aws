@@ -18,7 +18,7 @@
     "update-bucket-encryption": "aws s3api put-bucket-encryption --bucket $SOLUTION_BUCKET --server-side-encryption-configuration '{\"Rules\": [{\"ApplyServerSideEncryptionByDefault\": {\"SSEAlgorithm\": \"AES256\"}}]}'",
     "synth": "npm run cdk -- synth -c SOLUTION_NAME=quota-monitor-for-aws -c SOLUTION_VERSION=6.3.0",
     "deploy": "npm run cdk -- deploy -c SOLUTION_NAME=quota-monitor-for-aws -c SOLUTION_VERSION=6.3.0",
-    "orgHub:deploy": "export MODIFY_TEMPLATES=true && export SOLUTION_BUCKET=$(npm run -s get-cdk-bucket) && export SPOKE_ASSET_BUCKET_PREFIX=${SOLUTION_BUCKET%-${CDK_DEFAULT_REGION:-us-east-1}} && npm run update-bucket-encryption && rm -rf cdk.out && echo 'preparing region-aware StackSet assets' && npm run synth && node scripts/patch-spoke-template-assets.mjs && npm run deploy"
+    "orgHub:deploy": "export MODIFY_TEMPLATES=true && export SOLUTION_BUCKET=$(npm run -s get-cdk-bucket) && export SPOKE_ASSET_BUCKET_PREFIX=${SOLUTION_BUCKET%-${CDK_DEFAULT_REGION:-us-east-1}} && npm run update-bucket-encryption && rm -rf cdk.out && echo 'preparing region-aware StackSet assets' && npm run synth && node scripts/patch-spoke-template-assets.mjs && node scripts/publish-regional-spoke-assets.mjs && npm run deploy"
   },
   "devDependencies": {
     "@aws-cdk/aws-servicecatalogappregistry-alpha": "^2.246.0-alpha.0",

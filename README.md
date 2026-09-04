@@ -59,6 +59,11 @@ workflow prepares region-aware spoke templates using
 `scripts/patch-spoke-template-assets.mjs`; it keeps the buckets private and
 uses the target Region at StackSet deployment time.
 
+Set `SPOKE_ASSET_REGIONS` to the same comma-separated Regions passed to the
+hub (for example, `us-east-1,ap-southeast-2`). The workflow packages directory
+assets with the Lambda handler at the ZIP root and publishes every spoke asset
+to each regional CDK bucket before updating the StackSet.
+
 #### Deployment scenarios:
 
 The solution follows hub-spoke model and supports different deployment scenarios
