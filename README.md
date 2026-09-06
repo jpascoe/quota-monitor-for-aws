@@ -48,6 +48,12 @@ read from `/QuotaMonitor/Dashboard/QuotaSummaryTable` in SSM Parameter Store.
 Cloudflare can proxy a DNS CNAME such as `quota-monitor` to the S3 website
 origin. The dashboard stack outputs the site URL, API URL, and Cognito IDs.
 
+The browser stores the Cognito ID token and refresh token only in its current
+browser session. Before an ID token expires, the dashboard exchanges the
+refresh token for a new token and then obtains fresh scoped Identity Pool
+credentials to sign the Function URL request. Closing the browser session or
+an expired/revoked refresh token requires the user to sign in again.
+
 ### Organization collector assets
 
 Organization StackSet spokes load Lambda code and layers from an S3 bucket in
