@@ -8,7 +8,9 @@ export class QuotaMonitorDashboard extends Stack {
     const tableName = ssm.StringParameter.valueForStringParameter(this, "/QuotaMonitor/Dashboard/QuotaSummaryTable");
     const tableKeyArn = ssm.StringParameter.valueForStringParameter(this, "/QuotaMonitor/Dashboard/QuotaSummaryKeyArn");
     const allowedOrigin = new CfnParameter(this, "AllowedOrigin", { type: "String", default: "*", description: "Dashboard origin; replace * with the Cloudflare URL for production" });
+    const dashboardOriginBucketName = new CfnParameter(this, "DashboardOriginBucketName", { type: "String", default: "quota-monitor.invisiblesystems.xyz", description: "Existing public S3 website bucket used as the Cloudflare origin" });
     const site = new s3.Bucket(this, "DashboardSite", { websiteIndexDocument: "index.html", websiteErrorDocument: "index.html", blockPublicAccess: new s3.BlockPublicAccess({ blockPublicAcls: false, blockPublicPolicy: false, ignorePublicAcls: false, restrictPublicBuckets: false }), removalPolicy: RemovalPolicy.RETAIN, autoDeleteObjects: false });
+    const originSite = s3.Bucket.fromBucketName(this, "DashboardOriginSite", dashboardOriginBucketName.valueAsString);
     site.addToResourcePolicy(new iam.PolicyStatement({ actions: ["s3:GetObject"], resources: [site.arnForObjects("*")], principals: [new iam.AnyPrincipal()] }));
     NagSuppressions.addResourceSuppressions(site, [
       { id: "AwsSolutions-S1", reason: "Static public website bucket is fronted by Cloudflare; access logs are managed at the edge." },
@@ -30,7 +32,7 @@ export class QuotaMonitorDashboard extends Stack {
     const fnUrl = api.addFunctionUrl({ authType: lambda.FunctionUrlAuthType.AWS_IAM, cors: { allowedOrigins: [allowedOrigin.valueAsString], allowedMethods: [lambda.HttpMethod.GET], allowedHeaders: ["authorization", "content-type", "x-amz-date", "x-amz-security-token", "x-amz-content-sha256"] } });
     api.addPermission("DashboardUrlInvokePermission", { principal: new iam.AnyPrincipal(), action: "lambda:InvokeFunctionUrl", functionUrlAuthType: lambda.FunctionUrlAuthType.AWS_IAM });
     new cognito.CfnIdentityPoolRoleAttachment(this, "DashboardIdentityPoolRoles", { identityPoolId: identityPool.ref, roles: { authenticated: authenticatedRole.roleArn } });
-    new s3deploy.BucketDeployment(this, "DashboardAssets", { sources: [s3deploy.Source.asset(path.join(__dirname, "../../../frontend/dist"))], destinationBucket: site });
+    new s3deploy.BucketDeployment(this, "DashboardAssets", { sources: [s3deploy.Source.asset(path.join(__dirname, "../../../frontend/dist"))], destinationBucket: originSite });
     new CfnOutput(this, "DashboardSiteUrl", { value: site.bucketWebsiteUrl }); new CfnOutput(this, "DashboardApiUrl", { value: fnUrl.url }); new CfnOutput(this, "UserPoolId", { value: userPool.userPoolId }); new CfnOutput(this, "UserPoolClientId", { value: client.userPoolClientId }); new CfnOutput(this, "IdentityPoolId", { value: identityPool.ref });
     NagSuppressions.addStackSuppressions(this, [
       { id: "AwsSolutions-IAM4", reason: "CDK BucketDeployment uses the AWS-managed deployment helper role." },

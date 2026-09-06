@@ -46,7 +46,12 @@ by the browser; the DynamoDB summary table remains private. The table name is
 read from `/QuotaMonitor/Dashboard/QuotaSummaryTable` in SSM Parameter Store.
 
 Cloudflare can proxy a DNS CNAME such as `quota-monitor` to the S3 website
-origin. The dashboard stack outputs the site URL, API URL, and Cognito IDs.
+origin. With a proxied CNAME, Cloudflare preserves the public Host header, so
+the S3 website bucket must be named for the dashboard hostname. The dashboard
+stack publishes static assets to `DashboardOriginBucketName` (default:
+`quota-monitor.invisiblesystems.xyz`), while retaining its managed bucket for
+backward compatibility. The stack outputs the site URL, API URL, and Cognito
+IDs.
 
 The browser stores the Cognito ID token and refresh token only in its current
 browser session. Before an ID token expires, the dashboard exchanges the
