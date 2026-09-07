@@ -76,7 +76,7 @@ export class QuotaMonitorSQSpoke extends Stack {
     const frequency = new CfnParameter(this, "MonitoringFrequency", {
       type: "String",
       default: "rate(12 hours)",
-      allowedValues: ["rate(6 hours)", "rate(12 hours)", "rate(1 day)"],
+      allowedValues: ["rate(6 hours)", "rate(12 hours)", "rate(1 day)", "rate(7 days)"],
     });
 
     const reportOKNotifications = new CfnParameter(this, "ReportOKNotifications", {

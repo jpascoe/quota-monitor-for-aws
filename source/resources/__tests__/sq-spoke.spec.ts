@@ -124,7 +124,7 @@ describe("==SQ-Spoke Stack Tests==", () => {
       template.hasParameter("MonitoringFrequency", {
         Type: "String",
         Default: "rate(12 hours)",
-        AllowedValues: ["rate(6 hours)", "rate(12 hours)", "rate(1 day)"],
+        AllowedValues: ["rate(6 hours)", "rate(12 hours)", "rate(1 day)", "rate(7 days)"],
       });
     });
 
