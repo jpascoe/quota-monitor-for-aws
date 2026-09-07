@@ -59,6 +59,16 @@ refresh token for a new token and then obtains fresh scoped Identity Pool
 credentials to sign the Function URL request. Closing the browser session or
 an expired/revoked refresh token requires the user to sign in again.
 
+### Organization billing and Free Tier monitor
+
+The dashboard's optional Billing and Free Tier views are restricted to the
+`BillingAdmins` Cognito group. A daily hub-side collector assumes the
+`QuotaMonitorBillingReader` role in the organization management account and
+stores a 400-day history of consolidated Primary View snapshots. It uses Cost
+Explorer for month-to-date and per-service month-end forecasts, and the Free
+Tier API for current/forecast usage. Cost Explorer API requests are billable;
+the browser reads stored snapshots and never invokes Billing APIs directly.
+
 ### Organization collector assets
 
 Organization StackSet spokes load Lambda code and layers from an S3 bucket in
