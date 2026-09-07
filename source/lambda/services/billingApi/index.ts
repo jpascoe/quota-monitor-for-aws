@@ -16,7 +16,7 @@ export const handler: LambdaFunctionURLHandler = async event => {
   try {
     const result = await db.send(new ScanCommand({ TableName: tableName }));
     const records = latestRecords((result.Items ?? []) as Record<string, unknown>[]);
-    const path = event.rawPath || "/";
+    const path = `/${(event.rawPath || "/").replace(/^\/+/, "")}`;
     const query = event.queryStringParameters ?? {};
     const generatedAt = new Date().toISOString();
     if (path === "/metadata") return response(200, { items: [], nextCursor: null, generatedAt, snapshotDate: records[0]?.SnapshotDate ?? null });
