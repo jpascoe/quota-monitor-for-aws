@@ -7,6 +7,7 @@ import { UnsupportedEventException } from "solutions-utils";
 const deleteMessageMock = jest.fn();
 const receiveMessagesMock = jest.fn();
 const putItemMock = jest.fn();
+const destroyMock = jest.fn();
 
 jest.mock("solutions-utils", () => {
   const originalModule = jest.requireActual("solutions-utils");
@@ -17,6 +18,7 @@ jest.mock("solutions-utils", () => {
       return {
         deleteMessage: deleteMessageMock,
         receiveMessages: receiveMessagesMock,
+        destroy: destroyMock,
       };
     },
     DynamoDBHelper: function () {
@@ -111,6 +113,7 @@ describe("limitreport", function () {
       expect(receiveMessagesMock).toHaveBeenCalledTimes(2);
       expect(deleteMessageMock).toHaveBeenCalledTimes(4);
       expect(putItemMock).toHaveBeenCalledTimes(4);
+      expect(destroyMock).toHaveBeenCalledTimes(2);
     });
 
     it("handler should throw error for unsupported trigger", async () => {
@@ -123,9 +126,11 @@ describe("limitreport", function () {
     it("should delete sqs message if all APIs successful", async () => {
       await limitReport.readQueueAsync();
 
+      expect(receiveMessagesMock.mock.calls[0][1]).toBe(2);
       expect(receiveMessagesMock).toHaveBeenCalledTimes(2);
       expect(deleteMessageMock).toHaveBeenCalledTimes(4);
       expect(putItemMock).toHaveBeenCalledTimes(4);
+      expect(destroyMock).toHaveBeenCalledTimes(2);
     });
 
     it("should log dynamo error when put fails", async () => {
@@ -134,18 +139,18 @@ describe("limitreport", function () {
       expect(receiveMessagesMock).toHaveBeenCalledTimes(2);
       expect(deleteMessageMock).toHaveBeenCalledTimes(3);
       expect(putItemMock).toHaveBeenCalledTimes(4);
+      expect(destroyMock).toHaveBeenCalledTimes(2);
     });
 
     it("should handle some message loops returning empty arrays", async () => {
-      receiveMessagesMock
-        .mockResolvedValueOnce(data.Messages)
-        .mockResolvedValueOnce(emptyData);
+      receiveMessagesMock.mockResolvedValueOnce(data.Messages).mockResolvedValueOnce(emptyData);
 
       await limitReport.readQueueAsync();
 
       expect(receiveMessagesMock).toHaveBeenCalledTimes(2);
       expect(deleteMessageMock).toHaveBeenCalledTimes(2);
       expect(putItemMock).toHaveBeenCalledTimes(2);
+      expect(destroyMock).toHaveBeenCalledTimes(1);
     });
     it("should return an error if the message is empty", async () => {
       receiveMessagesMock.mockResolvedValue(emptyMessageBody);
@@ -155,6 +160,7 @@ describe("limitreport", function () {
       expect(receiveMessagesMock).toHaveBeenCalledTimes(2);
       expect(deleteMessageMock).toHaveBeenCalledTimes(0);
       expect(putItemMock).toHaveBeenCalledTimes(0);
+      expect(destroyMock).toHaveBeenCalledTimes(0);
     });
 
     it("should handle an error if the message fails to delete from the queue", async () => {
@@ -164,6 +170,7 @@ describe("limitreport", function () {
       expect(receiveMessagesMock).toHaveBeenCalledTimes(2);
       expect(deleteMessageMock).toHaveBeenCalledTimes(4);
       expect(putItemMock).toHaveBeenCalledTimes(4);
+      expect(destroyMock).toHaveBeenCalledTimes(2);
     });
 
     it("should handle missing environment variables", async () => {
@@ -179,6 +186,55 @@ describe("limitreport", function () {
       expect(receiveMessagesMock).toHaveBeenCalledTimes(0);
       expect(deleteMessageMock).toHaveBeenCalledTimes(0);
       expect(putItemMock).toHaveBeenCalledTimes(0);
+      expect(destroyMock).toHaveBeenCalledTimes(0);
+    });
+
+    it("should handle MAX_MESSAGES > 10", async () => {
+      process.env.MAX_MESSAGES = "11";
+
+      await limitReport.readQueueAsync();
+
+      expect(receiveMessagesMock.mock.calls[0][1]).toBe(10);
+      expect(receiveMessagesMock).toHaveBeenCalledTimes(2);
+      expect(deleteMessageMock).toHaveBeenCalledTimes(4);
+      expect(putItemMock).toHaveBeenCalledTimes(4);
+      expect(destroyMock).toHaveBeenCalledTimes(2);
+    });
+
+    it("should handle MAX_MESSAGES == 0", async () => {
+      process.env.MAX_MESSAGES = "0";
+
+      await limitReport.readQueueAsync();
+
+      expect(receiveMessagesMock.mock.calls[0][1]).toBe(10);
+      expect(receiveMessagesMock).toHaveBeenCalledTimes(2);
+      expect(deleteMessageMock).toHaveBeenCalledTimes(4);
+      expect(putItemMock).toHaveBeenCalledTimes(4);
+      expect(destroyMock).toHaveBeenCalledTimes(2);
+    });
+
+    it("should handle MAX_MESSAGES < 0", async () => {
+      process.env.MAX_MESSAGES = "-1";
+
+      await limitReport.readQueueAsync();
+
+      expect(receiveMessagesMock.mock.calls[0][1]).toBe(10);
+      expect(receiveMessagesMock).toHaveBeenCalledTimes(2);
+      expect(deleteMessageMock).toHaveBeenCalledTimes(4);
+      expect(putItemMock).toHaveBeenCalledTimes(4);
+      expect(destroyMock).toHaveBeenCalledTimes(2);
+    });
+
+    it("should handle MAX_MESSAGES being undefined", async () => {
+      process.env.MAX_MESSAGES = undefined;
+
+      await limitReport.readQueueAsync();
+
+      expect(receiveMessagesMock.mock.calls[0][1]).toBe(10);
+      expect(receiveMessagesMock).toHaveBeenCalledTimes(2);
+      expect(deleteMessageMock).toHaveBeenCalledTimes(4);
+      expect(putItemMock).toHaveBeenCalledTimes(4);
+      expect(destroyMock).toHaveBeenCalledTimes(2);
     });
   });
 });

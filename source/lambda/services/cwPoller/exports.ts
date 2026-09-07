@@ -9,6 +9,8 @@ import {
   DynamoDBHelper,
   EventsHelper,
   ServiceQuotasHelper,
+  stringEqualsIgnoreCase,
+  logger,
 } from "solutions-utils";
 
 /**
@@ -22,6 +24,7 @@ export const METRIC_STATS_PERIOD = 3600;
 export enum FREQUENCY {
   "06_HOUR" = "rate(6 hours)",
   "12_HOUR" = "rate(12 hours)",
+  "24_HOUR" = "rate(1 day)",
 }
 
 /**
@@ -55,9 +58,7 @@ interface IQuotaUtilizationEvent {
  * @param rate
  * @returns
  */
-function getFrequencyInHours(
-  rate: string = <string>process.env.POLLER_FREQUENCY
-) {
+function getFrequencyInHours(rate: string = <string>process.env.POLLER_FREQUENCY) {
   if (rate == FREQUENCY["06_HOUR"]) return 6;
   if (rate == FREQUENCY["12_HOUR"]) return 12;
   else return 24; // default frequency 24 hours
@@ -102,9 +103,7 @@ export function generateMetricQueryIdMap(quotas: ServiceQuota[]) {
   const sq = new ServiceQuotasHelper();
   const dict: MetricQueryIdToQuotaMap = {};
   for (const quota of quotas) {
-    const metricQueryId = sq.generateMetricQueryId(
-      <MetricInfo>quota.UsageMetric
-    );
+    const metricQueryId = sq.generateMetricQueryId(<MetricInfo>quota.UsageMetric, quota.QuotaCode);
     dict[metricQueryId] = quota;
   }
   return dict;
@@ -117,21 +116,46 @@ export function generateMetricQueryIdMap(quotas: ServiceQuota[]) {
  */
 export async function getCWDataForQuotaUtilization(queries: MetricDataQuery[]) {
   const cw = new CloudWatchHelper();
-  const dataPoints = await cw.getMetricData(
-    new Date(Date.now() - getFrequencyInHours() * 60 * 60 * 1000),
-    new Date(),
-    queries
-  );
-  return dataPoints;
+  const BATCH_SIZE = 100;
+  const allDataPoints = [];
+
+  const batchQueries = (queries: MetricDataQuery[]): MetricDataQuery[][] => {
+    const batches: MetricDataQuery[][] = [];
+
+    while (queries.length > 0) {
+      batches.push(queries.splice(0, BATCH_SIZE));
+    }
+
+    return batches;
+  };
+
+  const batches = batchQueries(queries);
+
+  for (const batch of batches) {
+    try {
+      const dataPoints = await cw.getMetricData(
+        new Date(Date.now() - getFrequencyInHours() * 60 * 60 * 1000),
+        new Date(),
+        batch
+      );
+      allDataPoints.push(...dataPoints);
+    } catch (error) {
+      if (error.name === "CloudWatchServiceException") {
+        logger.error(`Error occurred while getting metric data: ${error.message}`);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  return allDataPoints;
 }
 
 /**
  * @description returns the metric query id from the result query id
  * @param metricData
  */
-function getMetricQueryIdFromMetricData(
-  metricData: Omit<MetricDataResult, "Label">
-) {
+function getMetricQueryIdFromMetricData(metricData: Omit<MetricDataResult, "Label">) {
   return (<string>metricData.Id).split("_pct_utilization")[0];
 }
 
@@ -150,6 +174,7 @@ export function createQuotaUtilizationEvents(
 
   const items: IQuotaUtilizationEvent[] = [];
 
+  const sendOKNotifications = stringEqualsIgnoreCase(<string>process.env.REPORT_OK_NOTIFICATIONS, "Yes");
   utilizationValues.forEach((value, index) => {
     const quotaEvents: IQuotaUtilizationEvent = {
       status: QUOTA_STATUS.OK,
@@ -160,27 +185,52 @@ export function createQuotaUtilizationEvents(
         Service: <string>quota.UsageMetric?.MetricDimensions?.Service,
         Region: <string>process.env.AWS_REGION,
         "Current Usage": "",
-        "Limit Amount": "100", // max utilization is 100%
+        "Limit Amount": "100%", // max utilization is 100%
       },
     };
-    if (value == 100) {
+    if (value >= 100) {
       quotaEvents.status = QUOTA_STATUS.ERROR;
     } else if (value > +(<string>process.env.THRESHOLD)) {
       quotaEvents.status = QUOTA_STATUS.WARN;
     } else {
       quotaEvents.status = QUOTA_STATUS.OK;
     }
-    quotaEvents["check-item-detail"]["Current Usage"] = "" + value;
-    quotaEvents["check-item-detail"].Timestamp = (<Date[]>(
-      metricData.Timestamps
-    ))[index];
-
-    items.push(quotaEvents);
+    quotaEvents["check-item-detail"]["Current Usage"] = "" + value + "%";
+    quotaEvents["check-item-detail"].Timestamp = (<Date[]>metricData.Timestamps)[index];
+    if (sendOKNotifications || quotaEvents.status != QUOTA_STATUS.OK) {
+      items.push(quotaEvents);
+    }
   });
 
   return items;
 }
 
+export function createTestQuotaUtilizationEvents(testStatus: QUOTA_STATUS) {
+  let usage: string;
+
+  if (testStatus == QUOTA_STATUS.WARN) {
+    usage = process.env.THRESHOLD + "%";
+  } else {
+    usage = "100%";
+  }
+  const quotaEvents: IQuotaUtilizationEvent[] = [
+    {
+      status: testStatus,
+      "check-item-detail": {
+        "Limit Code": "L-testquota",
+        "Limit Name": "QM Test Quota",
+        Resource: "QM test resource",
+        Service: "QmTestService",
+        Region: "qm-test-region",
+        "Current Usage": usage,
+        "Limit Amount": "100%", // max utilization is 100%
+        Timestamp: new Date(),
+      },
+    },
+  ];
+
+  return quotaEvents;
+}
 /**
  * @description send events to spoke event bridge for quota utilization
  * @param eventBridge event bridge to receive the events

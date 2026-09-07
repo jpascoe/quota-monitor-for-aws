@@ -1,11 +1,12 @@
 {
   "name": "quota-monitor-for-aws",
-  "version": "6.2.2",
+  "version": "6.3.14",
   "description": "Quota Monitor for AWS",
   "author": "aws-solutions",
   "license": "Apache-2.0",
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js . --ext .ts",
+    "precommit": "pre-commit run --all-files",
     "prettier-format": "./node_modules/prettier/bin-prettier.js --config .prettierrc.yml '**/*.ts' --write",
     "build:cwPoller": "cd source/lambda/services/cwPoller && npm run build:all",
     "build:deploymentManager": "cd source/lambda/services/deploymentManager && npm run build:all",
@@ -16,18 +17,26 @@
     "build:slackNotifier": "cd source/lambda/services/slackNotifier && npm run build:all",
     "build:snsPublisher": "cd source/lambda/services/snsPublisher && npm run build:all",
     "build:taRefresher": "cd source/lambda/services/taRefresher && npm run build:all",
+    "build:dashboardApi": "cd source/lambda/services/dashboardApi && npm ci && npm run build",
+    "build:billingApi": "cd source/lambda/services/billingApi && npm ci && npm run build",
+    "build:billingCollector": "cd source/lambda/services/billingCollector && npm ci && npm run build",
     "build:utilsLayer": "cd source/lambda/utilsLayer && npm run build:all",
-    "build:all": "npm run build:utilsLayer && npm run build:cwPoller && npm run build:deploymentManager && npm run build:helper && npm run build:preReqManager && npm run build:quotaListManager && npm run build:reporter && npm run build:slackNotifier && npm run build:snsPublisher && npm run build:taRefresher",
+    "build:all": "npm run build:utilsLayer && npm run build:cwPoller && npm run build:deploymentManager && npm run build:helper && npm run build:preReqManager && npm run build:quotaListManager && npm run build:reporter && npm run build:slackNotifier && npm run build:snsPublisher && npm run build:taRefresher && npm run build:dashboardApi && npm run build:billingApi && npm run build:billingCollector",
     "test": "cd ./deployment && chmod +x run-unit-tests.sh && ./run-unit-tests.sh"
   },
   "devDependencies": {
-    "@types/uuid": "^9.0.0",
-    "@typescript-eslint/eslint-plugin": "^6.2.1",
-    "@typescript-eslint/parser": "^6.2.1",
-    "eslint": "^8.34.0",
-    "eslint-config-prettier": "^8.6.0",
-    "eslint-plugin-prettier": "^5.0.0",
-    "prettier": "^3.0.1",
-    "typescript": "^5.0.2"
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.0.3",
+    "@types/uuid": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.51.0",
+    "@typescript-eslint/parser": "^8.51.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@aws-sdk/client-service-quotas": "^3.962.0"
   }
 }

@@ -8,34 +8,68 @@ import { QuotaMonitorHub } from "../lib/hub.stack";
 import { QuotaMonitorTASpoke } from "../lib/ta-spoke.stack";
 import { QuotaMonitorSQSpoke } from "../lib/sq-spoke.stack";
 import { QuotaMonitorHubNoOU } from "../lib/hub-no-ou.stack";
+import { QuotaMonitorSnsSpoke } from "../lib/sns-spoke-stack";
+import { QuotaMonitorDashboard } from "../lib/dashboard.stack";
+import { QuotaMonitorBillingAccess } from "../lib/billing-access.stack";
 
-const app = new App();
-new PreReqStack(app, "quota-monitor-prerequisite", {
-  synthesizer: new DefaultStackSynthesizer({
-    generateBootstrapVersionRule: false,
-  }),
-});
-new QuotaMonitorHub(app, "quota-monitor-hub", {
-  synthesizer: new DefaultStackSynthesizer({
-    generateBootstrapVersionRule: false,
-  }),
-});
-new QuotaMonitorHubNoOU(app, "quota-monitor-hub-no-ou", {
-  synthesizer: new DefaultStackSynthesizer({
-    generateBootstrapVersionRule: false,
-  }),
-});
-new QuotaMonitorTASpoke(app, "quota-monitor-ta-spoke", {
-  synthesizer: new DefaultStackSynthesizer({
-    generateBootstrapVersionRule: false,
-  }),
-  analyticsReporting: false,
-});
-new QuotaMonitorSQSpoke(app, "quota-monitor-sq-spoke", {
-  synthesizer: new DefaultStackSynthesizer({
-    generateBootstrapVersionRule: false,
-  }),
-  analyticsReporting: false,
-});
+function addAppStacks(app: App): void {
+  /**
+   * MODIFY_TEMPLATES customizes asset handling for orgHub:deploy script:
+   * - Uses SOLUTION_BUCKET, disables default encryption, modifies synthesizer.
+   * - Workaround for spoke account deployments: Uses actual bucket instead of
+   *   ${ACCOUNT_ID} and ${ACCOUNT_REGION}, fixing S3 reference issues.
+   */
+  const MODIFY_TEMPLATES = process.env.MODIFY_TEMPLATES === "true";
+  const solutionBucket = MODIFY_TEMPLATES ? process.env.SOLUTION_BUCKET : undefined;
 
-Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
+  const synthesizerProps = {
+    generateBootstrapVersionRule: false,
+    ...(solutionBucket ? { fileAssetsBucketName: solutionBucket } : {}),
+  };
+  const synthesizer = new DefaultStackSynthesizer(synthesizerProps);
+
+  new PreReqStack(app, "quota-monitor-prerequisite", {
+    synthesizer,
+  });
+
+  new QuotaMonitorHub(app, "quota-monitor-hub", {
+    synthesizer,
+  });
+
+  new QuotaMonitorHubNoOU(app, "quota-monitor-hub-no-ou", {
+    synthesizer,
+  });
+
+  new QuotaMonitorTASpoke(app, "quota-monitor-ta-spoke", {
+    synthesizer,
+    analyticsReporting: false,
+  });
+
+  new QuotaMonitorSQSpoke(app, "quota-monitor-sq-spoke", {
+    synthesizer,
+    analyticsReporting: false,
+  });
+
+  new QuotaMonitorSnsSpoke(app, "quota-monitor-sns-spoke", {
+    synthesizer,
+    analyticsReporting: false,
+  });
+
+  new QuotaMonitorDashboard(app, "quota-monitor-dashboard", { synthesizer });
+  new QuotaMonitorBillingAccess(app, "quota-monitor-billing-access", { synthesizer });
+}
+
+function main(): void {
+  const app = new App();
+  const MODIFY_TEMPLATES = process.env.MODIFY_TEMPLATES === "true";
+
+  if (MODIFY_TEMPLATES) {
+    app.node.setContext("@aws-cdk/aws-s3-assets:disableDefaultEncryption", true);
+  }
+
+  Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
+
+  addAppStacks(app);
+}
+
+main();

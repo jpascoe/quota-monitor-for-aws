@@ -5,34 +5,267 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.3.14] - 2026-08-14
+
+### Fixed
+
+- Updated dependencies to address [CVE-2026-14257](https://avd.aquasec.com/nvd/cve-2026-14257) (brace-expansion)
+- Updated dependencies to address [CVE-2026-69152](https://avd.aquasec.com/nvd/cve-2026-69152) (brace-expansion)
+- Updated dependencies to address [GHSA-5p4m-2wfm-xmqj](https://github.com/advisories/GHSA-5p4m-2wfm-xmqj) (js-yaml)
+
+## [6.3.13] - 2026-07-24
+
+### Fixed
+
+- Updated dependencies to address [CVE-2026-13149](https://avd.aquasec.com/nvd/cve-2026-13149) (brace-expansion)
+- Updated dependencies to address [CVE-2026-45149](https://avd.aquasec.com/nvd/cve-2026-45149) (brace-expansion)
+- Updated dependencies to address [CVE-2026-13676](https://avd.aquasec.com/nvd/cve-2026-13676) (fast-uri)
+- Updated dependencies to address [CVE-2026-16221](https://avd.aquasec.com/nvd/cve-2026-16221) (fast-uri)
+- Updated dependencies to address [CVE-2026-13760](https://avd.aquasec.com/nvd/cve-2026-13760) (aws-cdk-lib)
+- Updated dependencies to address [CVE-2026-41907](https://avd.aquasec.com/nvd/cve-2026-41907) (uuid)
+- Updated dependencies to address [CVE-2026-53550](https://avd.aquasec.com/nvd/cve-2026-53550) (js-yaml)
+- Updated dependencies to address [CVE-2026-59869](https://avd.aquasec.com/nvd/cve-2026-59869) (js-yaml)
+- Updated dependencies to address [CVE-2026-8723](https://avd.aquasec.com/nvd/cve-2026-8723) (qs)
+- Updated dependencies to address [CVE-2026-49356](https://avd.aquasec.com/nvd/cve-2026-49356) (@babel/core)
+- Fixed metric stat recommendation override to exclude `CallCount` metrics from being overridden to `Maximum` - GitHub Issue [#274](https://github.com/aws-solutions/quota-monitor-for-aws/issues/274)
+
+## [6.3.12] - 2026-05-14
+
+### Fixed
+
+- Updated dependencies to address [CVE-2026-6321](https://nvd.nist.gov/vuln/detail/CVE-2026-6321)
+- Updated dependencies to address [CVE-2026-6322](https://nvd.nist.gov/vuln/detail/CVE-2026-6322)
+- Updated dependencies to address [CVE-2026-44665](https://nvd.nist.gov/vuln/detail/CVE-2026-44665)
+
+## [6.3.11] - 2026-05-01
+
+### Fixed
+
+- Updated dependencies to address [CVE-2026-33671](https://github.com/advisories/CVE-2026-33671)
+- Updated dependencies to address [CVE-2026-33937](https://github.com/advisories/CVE-2026-33937)
+- Updated dependencies to address [CVE-2026-33938](https://github.com/advisories/CVE-2026-33938)
+- Updated dependencies to address [CVE-2026-33939](https://github.com/advisories/CVE-2026-33939)
+- Updated dependencies to address [CVE-2026-33940](https://github.com/advisories/CVE-2026-33940)
+- Updated dependencies to address [CVE-2026-33941](https://github.com/advisories/CVE-2026-33941)
+- Updated dependencies to address [CVE-2026-4926](https://github.com/advisories/CVE-2026-4926)
+
+## [6.3.10] - 2026-03-25
+
+### Fixed
+
+- Updated dependencies to address [CVE-2026-33228](https://github.com/advisories/GHSA-rf6f-7fwh-wjgh)
+
+## [6.3.9] - 2026-03-19
+
+### Fixed
+
+- Updated dependencies to address [CVE-2026-32141](https://avd.aquasec.com/nvd/2026/cve-2026-32141)
+- Updated dependencies to address [CVE-2026-26278](https://github.com/advisories/GHSA-jmr7-xgp7-cmfj)
+
+## [6.3.8] - 2026-03-04
+
+### Fixed
+
+- Updated dependencies to address [CVE-2026-26996](https://avd.aquasec.com/nvd/cve-2026-26996)
+
+## [6.3.7] - 2026-02-26
+
+### Fixed
+
+- Updated dependencies to address [CVE-2026-26996](https://avd.aquasec.com/nvd/cve-2026-26996)
+
+## [6.3.6] - 2026-02-23
+
+### Fixed
+
+- Updated dependencies to address [CVE-2026-25128](https://avd.aquasec.com/nvd/2026/cve-2026-25128/)
+
+## [6.3.5] - 2026-02-06
+
+### Fixed
+
+- Updated dependencies to address [CVE-2026-25128](https://avd.aquasec.com/nvd/2026/cve-2026-25128/)
+
+## [6.3.4] - 2026-01-08
+
+### Fixed
+
+- Node.js 24 compatibility issue by downgrading uuid from v13 to v10
+
+## [6.3.3] - 2026-01-06
+
+### Changed
+
+- Dependency updates
+- Update lambda runtimes to NodeJS 24.x
+
+### Fixed
+
+- GitHub Issue [#226](https://github.com/aws-solutions/quota-monitor-for-aws/issues/226)
+
+## [6.3.2] - 2025-09-12
+
+### Changed
+
+- Remove AppRegistry
+- Set default metric stat to be Maximum for count metrics
+- Remove the dependency got and use the built-in fetch
+- Minor dependency updates
+
+### Fixed
+
+- GitHub Issue [#222](https://github.com/aws-solutions/quota-monitor-for-aws/issues/222)
+
+## [6.3.1] - 2025-05-19
+
+### Added
+
+- The template parameter ReportOKNotification to TA stack and No OU Hub stack.
+
+### Changed
+
+- Update dependencies and Lambda runtime
+
+### Fixed
+
+- GitHub Issues [#216](https://github.com/aws-solutions/quota-monitor-for-aws/issues/216), [#212](https://github.com/aws-solutions/quota-monitor-for-aws/issues/212), and [#208](https://github.com/aws-solutions/quota-monitor-for-aws/issues/208)
+
+## [6.3.0] - 2024-11-22
+
+### Added
+
+- Simulation capability for quota utilization events to test notification workflows
+- Configurable monitoring for SageMaker and Connect services
+- Optional Spoke notification stack for localized alerts
+- Support for AWS GCR Regions
+- Link to quota limit increase request in email/Slack notifications
+- Custom quota threshold value input option
+
+### Changed
+
+- In ORG/HYBRID mode, Resetting SSM parameters to NOP now triggers:
+  - Deletion of stack instances
+  - Clearing of event bus permissions
+- In HYBRID mode, deployment now proceeds with valid entries from either the OU ID list or the Account ID list, rather than requiring both to be valid
+- Made SNS notifications human readable
+
+### Fixed
+
+- GitHub Issues [#155](https://github.com/aws-solutions/quota-monitor-for-aws/issues/155), [#157](https://github.com/aws-solutions/quota-monitor-for-aws/issues/157), [#177](https://github.com/aws-solutions/quota-monitor-for-aws/issues/177), [#187](https://github.com/aws-solutions/quota-monitor-for-aws/issues/187), and [#202](https://github.com/aws-solutions/quota-monitor-for-aws/issues/202)
+
+## [6.2.11] - 2024-10-10
+
+### Changed
+
+- Add batching to getQuotasWithUtilizationMetrics function
+- Refactor \_putMonitoredQuotas function to use batch writes
+- Changed the memory allocation for the QMListManager Lambda function to 256 MB
+- Added better error handling for CloudWatch ValidationErrors, with attempt to identify problematic quotas
+
+### Fixed
+
+- GitHub Issues [#200](https://github.com/aws-solutions/quota-monitor-for-aws/issues/200) and [#201](https://github.com/aws-solutions/quota-monitor-for-aws/issues/201)
+
+## [6.2.10] - 2024-09-18
+
+### Fixed
+
+- Update path-to-regexp to address [CVE-2024-45296](https://nvd.nist.gov/vuln/detail/CVE-2024-45296)
+- Update micromatch to address [CVE-2024-4067](https://nvd.nist.gov/vuln/detail/CVE-2024-4067)
+
+## [6.2.9] - 2024-07-31
+
+### Fixed
+
+- Update fast-xml-parser to address [CVE-2024-41818](https://nvd.nist.gov/vuln/detail/CVE-2024-41818)
+
+## [6.2.8] - 2024-06-26
+
+### Fixed
+
+- Update dependency to address [CVE-2024-4068](https://avd.aquasec.com/nvd/cve-2024-4068)
+
+## [6.2.7] - 2024-06-10
+
+### Fixed
+
+- Added batching to get getMetricData calls to avoid limits
+- Added quotaCode to metric Ids to avoid duplicate Ids.
+
+## [6.2.6] - 2024-03-18
+
+### Changed
+
+- First of month schedule for quotaListManager Lambda function changed to every 30 days
+- Add rate limiting delay between listServiceQuota API calls
+- Add page size to Service Quotas API calls
+
+### Fixed
+
+- GitHub Issue [#183](https://github.com/aws-solutions/quota-monitor-for-aws/issues/183), PR [#147](https://github.com/aws-solutions/quota-monitor-for-aws/pull/47) - fix expiration of DynamoDB records
+
+## [6.2.5] - 2024-01-08
+
+### Changed
+
+- Made reporting of OK Messages optional
+- Added percentage marker on Service Quota notifications
+
+### Fixed
+
+- Added manual resource cleanup after sqs message consumption
+
+## [6.2.4] - 2023-11-09
+
+### Changed
+
+- Scoped permissions down for Stackset operations
+
+### Fixed
+
+- [Error](https://github.com/aws-solutions/quota-monitor-for-aws/issues/172) in saving notifications to summary table
+
+## [6.2.3] - 2023-10-24
+
+### Changed
+
+- Update dependencies to address [CVE-2023-45133](https://github.com/advisories/GHSA-67hx-6x53-jw92)
+
 ## [6.2.2] - 2023-08-16
 
 ### Added
+
 - Service Quotas spoke template parameters exposed in the hub template too
 
 ### Changed
+
 - Lambda run times upgraded to Node.js18
 - Dependency updates
 
-
 ## [6.2.1] - 2023-06-28
+
 ### Changed
+
 - Dependency updates addressing [CVE-2023-26920](https://cwe.mitre.org/data/definitions/1321.html)
 
 ## [6.2.0] - 2023-06-01
 
 ### Added
+
 - Support for monitoring resources with Service Catalog AppRegistry
 
 ### Changed
+
 - Customer Managed Keys for the resources in hub stacks
 
 ### Fixed
+
 - Bugs resulting in dynamoDb tables not being populated
 
 ## [6.1.0] - 2023-04-05
 
 ### Added
+
 - Support for monitoring all usage reporting quotas from all services supported by Service Quotas
 - Ability to mute selected notifications
 - Support for GovCloud regions
@@ -41,6 +274,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow customization to Stack Set deployments configuration
 
 ### Changed
+
 - Use AWS Managed keys for the resources in the templates to help reduce the cost of deployment.
 
 ## [6.0.0] - 2022-10-14

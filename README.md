@@ -1,5 +1,11 @@
 # Quota Monitor for AWS
 
+**Important: This solution will retire in December 2026. Deployments (via CloudFormation or GitHub) will remain operational, but customers will assume responsibility for maintenance and API-related updates post-retirement.**
+
+**Customers can explore using [AWS Service Quotas](https://docs.aws.amazon.com/servicequotas/latest/userguide/intro.html) for proactive usage monitoring and automated management of your service quotas. [Service Quotas Automatic Management](https://docs.aws.amazon.com/servicequotas/latest/userguide/automatic-management.html) provides a fully AWS-managed alternative that covers the most common quota monitoring and alerting needs without requiring customer-managed infrastructure.**
+
+**Planning your migration: When transitioning to Automatic Management, note these key differences to ensure full coverage: it uses standardized AWS-defined thresholds (80% and 95%), focuses on resource quotas (not API rate limits), and supports a subset of services. To view supported quotas in your account, navigate to the [Automatic Management section](https://console.aws.amazon.com/servicequotas/home/amSettings) in the [Service Quotas console](https://console.aws.amazon.com/servicequotas/).**
+
 **[🚀Solution Landing Page](https://aws.amazon.com/solutions/implementations/quota-monitor/)** | **[🚧Feature request](https://github.com/aws-solutions/quota-monitor-for-aws/issues/new?assignees=&labels=feature-request%2C+enhancement&template=feature_request.md&title=)** | **[🐛Bug Report](https://github.com/aws-solutions/quota-monitor-for-aws/issues/new?assignees=&labels=bug%2C+triage&template=bug_report.md&title=)** | **[📜Documentation Improvement](https://github.com/aws-solutions/quota-monitor-for-aws/issues/new?assignees=&labels=document-update&template=documentation_improvements.md&title=)**
 
 _Note: For any relevant information outside the scope of this readme, please refer to the solution landing page and implementation guide._
@@ -31,6 +37,54 @@ The architecture can be broken down into different components, few which are ins
 
 <img src="./architecture.png" width="750" height="350">
 
+### Quota dashboard
+
+The optional `quota-monitor-dashboard` CDK stack deploys a React dashboard to
+an S3 website bucket and exposes read-only quota data through an IAM-authorized
+Lambda Function URL. Cognito User Pool and Identity Pool credentials are used
+by the browser; the DynamoDB summary table remains private. The table name is
+read from `/QuotaMonitor/Dashboard/QuotaSummaryTable` in SSM Parameter Store.
+
+Cloudflare can proxy a DNS CNAME such as `quota-monitor` to the S3 website
+origin. With a proxied CNAME, Cloudflare preserves the public Host header, so
+the S3 website bucket must be named for the dashboard hostname. The dashboard
+stack publishes static assets to `DashboardOriginBucketName` (default:
+`quota-monitor.invisiblesystems.xyz`), while retaining its managed bucket for
+backward compatibility. The stack outputs the site URL, API URL, and Cognito
+IDs.
+
+The browser stores the Cognito ID token and refresh token only in its current
+browser session. Before an ID token expires, the dashboard exchanges the
+refresh token for a new token and then obtains fresh scoped Identity Pool
+credentials to sign the Function URL request. Closing the browser session or
+an expired/revoked refresh token requires the user to sign in again.
+
+### Organization billing and Free Tier monitor
+
+The dashboard's optional Billing and Free Tier views are restricted to the
+`BillingAdmins` Cognito group. A daily hub-side collector assumes the
+`QuotaMonitorBillingReader` role in the organization management account and
+stores a 400-day history of consolidated Primary View snapshots. It uses Cost
+Explorer for month-to-date and per-service month-end forecasts, and the Free
+Tier API for current/forecast usage. Cost Explorer API requests are billable;
+the browser reads stored snapshots and never invokes Billing APIs directly.
+
+### Organization collector assets
+
+Organization StackSet spokes load Lambda code and layers from an S3 bucket in
+the same Region as the target account. For a multi-Region Organization
+deployment, bootstrap the monitoring account in every monitored Region,
+publish the generated spoke assets to each regional CDK asset bucket, and grant
+only `s3:GetObject` to principals in the Organization. The `orgHub:deploy`
+workflow prepares region-aware spoke templates using
+`scripts/patch-spoke-template-assets.mjs`; it keeps the buckets private and
+uses the target Region at StackSet deployment time.
+
+Set `SPOKE_ASSET_REGIONS` to the same comma-separated Regions passed to the
+hub (for example, `us-east-1,ap-southeast-2`). The workflow packages directory
+assets with the Lambda handler at the ZIP root and publishes every spoke asset
+to each regional CDK bucket before updating the StackSet.
+
 #### Deployment scenarios:
 
 The solution follows hub-spoke model and supports different deployment scenarios
@@ -51,6 +105,7 @@ _Note: ta-spoke.template should be deployed in us-east-1 ONLY. sq-spoke.template
 - [quota-monitor-hub-no-ou.template](https://solutions-reference.s3.amazonaws.com/quota-monitor-for-aws/latest/quota-monitor-hub-no-ou.template)
 - [quota-monitor-ta-spoke.template](https://solutions-reference.s3.amazonaws.com/quota-monitor-for-aws/latest/quota-monitor-ta-spoke.template)
 - [quota-monitor-sq-spoke.template](https://solutions-reference.s3.amazonaws.com/quota-monitor-for-aws/latest/quota-monitor-sq-spoke.template)
+- [quota-monitor-sns-spoke.template](https://solutions-reference.s3.amazonaws.com/quota-monitor-for-aws/latest/quota-monitor-sns-spoke.template)
 - [quota-monitor-prerequisite.template](https://solutions-reference.s3.amazonaws.com/quota-monitor-for-aws/latest/quota-monitor-prerequisite.template)
 
 _Note: hub, hub-no-ou and sq-spoke templates can be deployed in ANY region; prerequisite and ta-spoke template can be deployed in us-east-1 ONLY._
@@ -74,7 +129,7 @@ The steps given below can be followed if you are looking to customize the soluti
 
 ### Setup
 
-- Javascript Pre-requisite: node=v16.17.0 | npm=8.15.0
+- Javascript Pre-requisite: node=v24.0.0 | npm=11.0.0
 
 Clone the repository and run the following commands to install dependencies
 
@@ -126,6 +181,8 @@ npm ci
 
 Bootstrap your CDK environment
 
+- This solution requires that you have bootstrapped your AWS account with CDK using the default stack name. If you haven't done so already, run:
+
 ```
 npm run cdk -- bootstrap --profile <PROFILE_NAME>
 ```
@@ -139,17 +196,23 @@ _Note:_
 
 - STACK_NAME, substitute the name of the stack that you want to deploy, check cdk [app](./source/resources/bin/app.ts)
 - PROFILE_NAME, substitute the name of an AWS CLI profile that contains appropriate credentials for deploying in your preferred region
+- The deployment scripts assume the CDK bootstrap stack is named CDKToolkit. If you've used a custom name for your bootstrap stack, you'll need to modify the get-cdk-bucket script in package.json.
+- For the ORG/HYBRID mode, Ensure that the account or organization you're deploying stacks to has the necessary permissions to access the CDK assets bucket.
+- CDK creates an S3 bucket for assets in only one region. As a result, spoke stacks will deploy successfully only in the region where this bucket is created.
 
 _✅ Solution stack is deployed with your customized code._
 
 ## Independent spoke templates
 
-There are two spoke templates packaged with the solution
+There are three spoke templates packaged with the solution:
 
 - ta-spoke: provisions resources to support Trusted Advisor quota checks
 - sq-spoke: provisions resources to support Service Quotas checks
+- sns-spoke: provisions resources to support spoke account-specific notifications
 
-Both spoke templates are independent standalone stacks that can be individually deployed. You can deploy the spoke stack and route usage events and notifications to your preferred destinations. Additionally, in sq-spoke stack you can control which services to monitor, by toggling _monitored_ status of the services in the DynamoDB table _ServiceTable_. For deploying sq-spoke stack:
+All three spoke templates (TA, SQ, and SNS) are independent standalone stacks that can be individually deployed. You can deploy these spoke stacks and route usage events and notifications to your preferred destinations.
+
+For the SQ spoke stack, you can control which services to monitor by toggling the _monitored_ status of the services in the DynamoDB table _ServiceTable_. The SNS spoke stack provides an additional option for routing notifications within spoke accounts. For deploying sq-spoke stack:
 
 ```
 npm run cdk -- deploy quota-monitor-sq-spoke --parameters EventBusArn=<BUS_ARN> --profile <PROFILE_NAME>
@@ -199,7 +262,7 @@ See license [here](./LICENSE.txt)
 
 ## Collection of operational metrics
 
-This solution collects anonymized operational metrics to help AWS improve the quality and features of the solution. For more information, including how to disable this capability, please see the [implementation guide](https://docs.aws.amazon.com/solutions/latest/serverless-transit-network-orchestrator/operational-metrics.html).
+This solution sends operational metrics to AWS (the “Data”) about the use of this solution. We use this Data to better understand how customers use this solution and related services and products. AWS’s collection of this Data is subject to the [AWS Privacy Notice](https://aws.amazon.com/privacy/).
 
 ---
 

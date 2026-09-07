@@ -1,20 +1,20 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-  DynamoDBClient,
-  DynamoDBServiceException,
-} from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, DynamoDBServiceException } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
   PutCommand,
   QueryCommand,
   GetCommand,
   BatchWriteCommand,
+  BatchWriteCommandOutput,
+  ScanCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { catchDecorator } from "./catch";
-import { ServiceHelper } from "./exports";
+import { ServiceHelper, sleep } from "./exports";
 import { logger } from "./logger";
+import { ScanCommandOutput } from "@aws-sdk/lib-dynamodb/dist-types/commands/ScanCommand";
 
 /**
  * @description helper class for Event Bridge
@@ -51,9 +51,43 @@ export class DynamoDBHelper extends ServiceHelper<DynamoDBClient> {
       label: this.moduleName,
       message: `putting JSON item on ${tableName}: ${JSON.stringify(item)}`,
     });
-    await this.ddbDocClient.send(
-      new PutCommand({ TableName: tableName, Item: item })
-    );
+    await this.ddbDocClient.send(new PutCommand({ TableName: tableName, Item: item }));
+  }
+
+  /**
+   * @description Executes a BatchWrite command using DynamoDB document client with retries
+   * @param tableName
+   * @param writeRequests An array of write requests (PutRequest or DeleteRequest)
+   */
+  @catchDecorator(DynamoDBServiceException, true)
+  async batchWrite(
+    tableName: string,
+    writeRequests: any[]
+  ): Promise<{ success: boolean; result: BatchWriteCommandOutput }> {
+    const maxRetries = 5;
+    let retries = 0;
+    let result: BatchWriteCommandOutput;
+    do {
+      const params = {
+        RequestItems: {
+          [tableName]: writeRequests,
+        },
+      };
+      result = await this.ddbDocClient.send(new BatchWriteCommand(params));
+      writeRequests = result.UnprocessedItems?.[tableName] || [];
+      if (writeRequests.length === 0) {
+        return { success: true, result }; // All items processed successfully
+      }
+      retries++;
+      if (retries < maxRetries) {
+        await sleep(2 ** retries * 1000 + 1000); // Exponential backoff
+      }
+    } while (retries < maxRetries);
+    logger.warn({
+      label: this.moduleName,
+      message: `Failed to process ${writeRequests.length} items after ${maxRetries} attempts.`,
+    });
+    return { success: false, result };
   }
 
   /**
@@ -88,10 +122,7 @@ export class DynamoDBHelper extends ServiceHelper<DynamoDBClient> {
    * @returns
    */
   @catchDecorator(DynamoDBServiceException, false)
-  async queryQuotasForService(
-    tableName: string,
-    serviceCode: string
-  ) {
+  async queryQuotasForService(tableName: string, serviceCode: string) {
     logger.debug({
       label: this.moduleName,
       message: `getting quota items from ${tableName} for ${serviceCode}`,
@@ -127,5 +158,34 @@ export class DynamoDBHelper extends ServiceHelper<DynamoDBClient> {
       },
     };
     await this.ddbDocClient.send(new BatchWriteCommand(batchWriteParams));
+  }
+
+  /**
+   * @description retrieves enabled service codes using ddb document client
+   * @param tableName - service table name
+   * @returns
+   */
+  @catchDecorator(DynamoDBServiceException, true)
+  async getAllEnabledServices(tableName: string): Promise<string[]> {
+    logger.debug({
+      label: this.moduleName,
+      message: `getting services from from ${tableName}`,
+    });
+    let response: ScanCommandOutput | undefined = undefined;
+    const allItems: string[] = [];
+    do {
+      response = await this.ddbDocClient.send(
+        new ScanCommand({
+          TableName: tableName,
+          ExclusiveStartKey: response ? response.LastEvaluatedKey : undefined,
+        })
+      );
+      if (response.Items) {
+        allItems.push(
+          ...response.Items.filter((item) => item["Monitored"] === true).map((item) => item["ServiceCode"])
+        );
+      }
+    } while (response.LastEvaluatedKey);
+    return allItems;
   }
 }

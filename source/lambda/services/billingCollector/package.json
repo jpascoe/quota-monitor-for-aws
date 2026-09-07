@@ -1,0 +1,15 @@
+{
+  "name": "quota-monitor-billing-collector",
+  "version": "6.3.14",
+  "private": true,
+  "main": "./index.js",
+  "scripts": { "build": "npx tsc --project tsconfig.json" },
+  "dependencies": {
+    "@aws-sdk/client-cost-explorer": "^3.962.0",
+    "@aws-sdk/client-dynamodb": "3.1126.0",
+    "@aws-sdk/client-freetier": "^3.962.0",
+    "@aws-sdk/client-sts": "^3.962.0",
+    "@aws-sdk/lib-dynamodb": "3.1126.0"
+  },
+  "devDependencies": { "@types/aws-lambda": "^8.10.147", "@types/node": "^25.0.3", "typescript": "^5.9.3" }
+}

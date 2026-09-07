@@ -1,5 +1,6 @@
 **/node_modules
 **/dist
+frontend/dist
 **/layer
 **/open-source
 **/.zip
@@ -11,8 +12,12 @@
 **/global-s3-assets
 **/regional-s3-assets
 **/npm-debug.log
+**/*.tsbuildinfo
 **/test-report.xml
 .scannerwork
+internal/scripts/redpencil
+.temp_redpencil
+bom.json
 
 #cdk related files
 *cdk.out*
@@ -23,3 +28,14 @@ source/test/*.js
 
 #cfn nag related output files
 cfn_nag_suppressions.log
+
+build
+git-info
+
+# Patch release secrets
+.env
+**/.env.*
+
+# Local agent guidance and skills
+AGENTS.md
+.agents/

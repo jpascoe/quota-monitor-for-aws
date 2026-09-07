@@ -1,0 +1,9 @@
+{
+  "name": "quota-monitor-dashboard-api",
+  "version": "6.3.14",
+  "private": true,
+  "main": "./index.js",
+  "dependencies": { "@aws-sdk/client-dynamodb": "^3.962.0", "@aws-sdk/lib-dynamodb": "^3.962.0" },
+  "devDependencies": { "@types/aws-lambda": "^8.10.147", "@types/node": "^25.0.3", "typescript": "^5.9.3" },
+  "scripts": { "build": "npx tsc --project tsconfig.json" }
+}
