@@ -1,0 +1,191 @@
+{
+  "date": "2026-10-06",
+  "issue": "IC-96",
+  "quotaScopes": [
+    {
+      "account": "007427784471",
+      "region": "ap-southeast-2",
+      "enabled": true,
+      "allowedServices": [
+        "cognito-identity",
+        "cognito-idp",
+        "dynamodb",
+        "events",
+        "lambda",
+        "s3",
+        "ses",
+        "sqs"
+      ]
+    },
+    {
+      "account": "007427784471",
+      "region": "us-east-1",
+      "enabled": true,
+      "allowedServices": [
+        "cognito-identity",
+        "cognito-idp",
+        "dynamodb",
+        "events",
+        "lambda",
+        "s3",
+        "ses",
+        "sqs"
+      ]
+    },
+    {
+      "account": "131228246479",
+      "region": "ap-southeast-2",
+      "enabled": false,
+      "allowedServices": []
+    },
+    {
+      "account": "131228246479",
+      "region": "us-east-1",
+      "enabled": true,
+      "allowedServices": [
+        "cognito-identity",
+        "cognito-idp",
+        "dynamodb",
+        "events",
+        "lambda",
+        "s3",
+        "ses"
+      ]
+    },
+    {
+      "account": "182399708983",
+      "region": "ap-southeast-2",
+      "enabled": false,
+      "allowedServices": []
+    },
+    {
+      "account": "182399708983",
+      "region": "us-east-1",
+      "enabled": true,
+      "allowedServices": [
+        "dynamodb"
+      ]
+    },
+    {
+      "account": "231351515510",
+      "region": "ap-southeast-2",
+      "enabled": true,
+      "allowedServices": [
+        "cognito-identity",
+        "cognito-idp",
+        "dynamodb",
+        "events",
+        "lambda",
+        "s3",
+        "ses"
+      ]
+    },
+    {
+      "account": "231351515510",
+      "region": "us-east-1",
+      "enabled": false,
+      "allowedServices": []
+    },
+    {
+      "account": "493987692616",
+      "region": "ap-southeast-2",
+      "enabled": false,
+      "allowedServices": []
+    },
+    {
+      "account": "493987692616",
+      "region": "us-east-1",
+      "enabled": false,
+      "allowedServices": []
+    },
+    {
+      "account": "505435643877",
+      "region": "ap-southeast-2",
+      "enabled": true,
+      "allowedServices": [
+        "apigateway",
+        "bedrock",
+        "bedrock-agentcore",
+        "cognito-identity",
+        "cognito-idp",
+        "dynamodb",
+        "events",
+        "lambda",
+        "s3",
+        "ses",
+        "sqs",
+        "transcribe"
+      ]
+    },
+    {
+      "account": "505435643877",
+      "region": "us-east-1",
+      "enabled": true,
+      "allowedServices": [
+        "cloudfront",
+        "wafv2"
+      ]
+    },
+    {
+      "account": "666512941180",
+      "region": "ap-southeast-2",
+      "enabled": false,
+      "allowedServices": []
+    },
+    {
+      "account": "666512941180",
+      "region": "us-east-1",
+      "enabled": false,
+      "allowedServices": []
+    },
+    {
+      "account": "767397675128",
+      "region": "ap-southeast-2",
+      "enabled": true,
+      "allowedServices": [
+        "cognito-identity",
+        "cognito-idp",
+        "dynamodb",
+        "events",
+        "lambda",
+        "s3",
+        "ses",
+        "sqs"
+      ]
+    },
+    {
+      "account": "767397675128",
+      "region": "us-east-1",
+      "enabled": true,
+      "allowedServices": [
+        "cloudfront"
+      ]
+    },
+    {
+      "account": "832721970534",
+      "region": "ap-southeast-2",
+      "enabled": true,
+      "allowedServices": [
+        "cognito-identity",
+        "cognito-idp",
+        "dynamodb",
+        "events",
+        "lambda",
+        "s3",
+        "ses",
+        "sqs"
+      ]
+    },
+    {
+      "account": "832721970534",
+      "region": "us-east-1",
+      "enabled": false,
+      "allowedServices": []
+    }
+  ],
+  "accessGap": {
+    "account": "254572619934",
+    "name": "Deepracer",
+    "reason": "Existing organisation and deployment role assumptions denied; unchanged."
+  }
+}

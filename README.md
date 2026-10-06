@@ -275,3 +275,8 @@ http://www.apache.org/licenses/LICENSE-2.0
 ```
 
 or in the ["license"](./LICENSE.txt) file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+
+## Cost-controlled monitoring scope (IC-96, 6 October 2026)
+
+`monitoring-scope-policy.json` records the reviewed account/region/service allowlist. Weekly polling is unchanged. Live service-table flags were reduced from 5,193 to 62 enabled combinations across the accessible spokes; eight unused regional poller and monthly-discovery schedules are disabled, leaving ten active accessible scopes. DeepRacer could not be inventoried because role assumption was denied and remains unchanged. Retain the policy after any stack update. Existing disabled service flags survive monthly refresh, but newly discovered services default to enabled in the current runtime, and SageMaker/Connect stack parameters can override flags. Review newly discovered services against this allowlist and reapply exclusions after stack updates; a future reviewed runtime change should make new-service discovery opt-in. No source/runtime redeployment is included in this change. Historical CloudWatch/Cost Explorer totals include activity beyond this monitor; confirm realised savings from subsequent billing rather than converting the scope reduction into a dollar estimate.
