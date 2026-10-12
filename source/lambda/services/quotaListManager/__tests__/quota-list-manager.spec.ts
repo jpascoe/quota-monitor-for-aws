@@ -179,7 +179,29 @@ describe("Quota List Manager Exports", () => {
     });
   });
 
-  it("should should not put the service monitoring status if it already exists", async () => {
+  it("should discover new services without enabling monitoring", async () => {
+    getItemMock.mockResolvedValue(undefined);
+    await putServiceMonitoringStatus({ serviceTable: "dbTable" });
+    for (const service of serviceCodes) {
+      expect(putItemMock).toHaveBeenCalledWith("dbTable", {
+        ServiceCode: service,
+        Monitored: false,
+      });
+    }
+    expect(putItemMock).not.toHaveBeenCalledWith("dbTable", expect.objectContaining({ Monitored: true }));
+  });
+
+  it("should preserve existing enabled and disabled services on discovery", async () => {
+    getItemMock.mockImplementation(async (_table, key) => ({
+      ServiceCode: key.ServiceCode,
+      Monitored: key.ServiceCode === serviceCodes[0],
+    }));
+    await putServiceMonitoringStatus({ serviceTable: "dbTable" });
+    expect(putItemMock).not.toHaveBeenCalled();
+    getItemMock.mockResolvedValue(undefined);
+  });
+
+  it("should not put the service monitoring status if it already exists", async () => {
     getItemMock.mockResolvedValueOnce({});
     await putServiceMonitoringStatus({
       serviceTable: "dbTable",

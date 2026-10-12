@@ -280,3 +280,6 @@ or in the ["license"](./LICENSE.txt) file accompanying this file. This file is d
 ## Cost-controlled monitoring scope (IC-96, 6 October 2026)
 
 `monitoring-scope-policy.json` records the reviewed account/region/service allowlist. Weekly polling is unchanged. Live service-table flags were reduced from 5,193 to 62 enabled combinations across the accessible spokes; eight unused regional poller and monthly-discovery schedules are disabled, leaving ten active accessible scopes. DeepRacer could not be inventoried because role assumption was denied and remains unchanged. Retain the policy after any stack update. Existing disabled service flags survive monthly refresh, but newly discovered services default to enabled in the current runtime, and SageMaker/Connect stack parameters can override flags. Review newly discovered services against this allowlist and reapply exclusions after stack updates; a future reviewed runtime change should make new-service discovery opt-in. No source/runtime redeployment is included in this change. Historical CloudWatch/Cost Explorer totals include activity beyond this monitor; confirm realised savings from subsequent billing rather than converting the scope reduction into a dollar estimate.
+
+
+- 2026-10-12: IC-96 cost-control implementation and validation: see `docs/cost-control-2026-10-12.md` (repository root).

@@ -99,7 +99,9 @@ export async function putServiceMonitoringStatus(props: PutServiceMonitoringStat
           label: `${MODULE_NAME}/putServiceMonitoringStatus`,
           message: `Adding new services`,
         });
-        let monitoringStatus = true;
+        // Discovery never opts a service into paid metric polling.
+        // Existing selections and explicit SageMaker/Connect choices are preserved.
+        let monitoringStatus = false;
         if (service === "sagemaker" && sageMakerMonitoring !== undefined) {
           monitoringStatus = sageMakerMonitoring;
         } else if (service === "connect" && connectMonitoring !== undefined) {
