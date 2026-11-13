@@ -17,6 +17,12 @@ describe("==Hub Stack Tests==", () => {
   describe("hub stack resources", () => {
     TestsCommon.assertCommonHubResources(template);
 
+    it("should default new quota spokes to weekly polling and explicit service opt-in", () => {
+      template.hasParameter("SQMonitoringFrequency", { Type: "String", Default: "rate(7 days)" });
+      template.hasParameter("SageMakerMonitoring", { Type: "String", Default: "No" });
+      template.hasParameter("ConnectMonitoring", { Type: "String", Default: "No" });
+    });
+
     it("should have SSM Parameters for notification, scope, region, and dashboard configuration", () => {
       template.resourceCountIs("AWS::SSM::Parameter", 7);
       template.hasResource("AWS::SSM::Parameter", {

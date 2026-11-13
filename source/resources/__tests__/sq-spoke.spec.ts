@@ -123,8 +123,26 @@ describe("==SQ-Spoke Stack Tests==", () => {
     it("should have a MonitoringFrequency parameter", () => {
       template.hasParameter("MonitoringFrequency", {
         Type: "String",
-        Default: "rate(12 hours)",
+        Default: "rate(7 days)",
         AllowedValues: ["rate(6 hours)", "rate(12 hours)", "rate(1 day)", "rate(7 days)"],
+      });
+    });
+
+    it("should require explicit opt-in for the special service overrides", () => {
+      template.hasParameter("SageMakerMonitoring", { Type: "String", Default: "No" });
+      template.hasParameter("ConnectMonitoring", { Type: "String", Default: "No" });
+    });
+
+    it("should preserve legacy scope unless an explicit per-spoke policy is supplied", () => {
+      template.hasParameter("MonitoredServiceAllowlist", { Type: "String", Default: "" });
+      template.hasParameter("QuotaScopePolicyRequired", { Type: "String", Default: "false" });
+      template.hasResourceProperties("AWS::Lambda::Function", {
+        Environment: Match.objectLike({
+          Variables: Match.objectLike({
+            MONITORED_SERVICE_ALLOWLIST: { Ref: "MonitoredServiceAllowlist" },
+            QUOTA_SCOPE_POLICY_REQUIRED: { Ref: "QuotaScopePolicyRequired" },
+          }),
+        }),
       });
     });
 
@@ -132,6 +150,27 @@ describe("==SQ-Spoke Stack Tests==", () => {
       template.hasResourceProperties("AWS::Events::Rule", {
         ScheduleExpression: {
           Ref: "MonitoringFrequency",
+        },
+      });
+    });
+
+    it("should remove service-table scan permission when scoped policy is required", () => {
+      template.hasCondition("QuotaScopePolicyRequiredCondition", {
+        "Fn::Equals": [{ Ref: "QuotaScopePolicyRequired" }, "true"],
+      });
+      template.hasResourceProperties("AWS::IAM::Policy", {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Action: [
+                "dynamodb:GetItem",
+                {
+                  "Fn::If": ["QuotaScopePolicyRequiredCondition", { Ref: "AWS::NoValue" }, "dynamodb:Scan"],
+                },
+              ],
+              Resource: { "Fn::GetAtt": [Match.stringLikeRegexp("SQServiceTable"), "Arn"] },
+            }),
+          ]),
         },
       });
     });

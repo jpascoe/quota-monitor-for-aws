@@ -122,7 +122,7 @@ export class QuotaMonitorHub extends Stack {
 
     const sqMonitoringFrequency = new CfnParameter(this, "SQMonitoringFrequency", {
       type: "String",
-      default: "rate(12 hours)",
+      default: "rate(7 days)",
       allowedValues: ["rate(6 hours)", "rate(12 hours)", "rate(1 day)", "rate(7 days)"],
     });
 
@@ -134,7 +134,7 @@ export class QuotaMonitorHub extends Stack {
 
     const sageMakerMonitoring = new CfnParameter(this, "SageMakerMonitoring", {
       type: "String",
-      default: "Yes",
+      default: "No",
       allowedValues: ["Yes", "No"],
       description:
         "Enable monitoring for SageMaker quotas. NOTE: (1) SageMaker monitoring consumes a high number of quotas, potentially resulting in higher usage cost. (2) Changing this value during a stack update will affect all spoke accounts but if left unchanged, it preserves existing spoke accounts customizations.",
@@ -142,7 +142,7 @@ export class QuotaMonitorHub extends Stack {
 
     const connectMonitoring = new CfnParameter(this, "ConnectMonitoring", {
       type: "String",
-      default: "Yes",
+      default: "No",
       allowedValues: ["Yes", "No"],
       description:
         "Enable monitoring for Connect quotas. NOTE: (1) Connect monitoring consumes a high number of quotas, potentially resulting in higher usage cost. (2) Changing this value during a stack update will affect all spoke accounts but if left unchanged, it preserves existing spoke accounts customizations.",

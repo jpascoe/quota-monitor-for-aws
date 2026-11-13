@@ -181,11 +181,47 @@
       "region": "us-east-1",
       "enabled": false,
       "allowedServices": []
+    },
+    {
+      "account": "057193910852",
+      "region": "us-east-1",
+      "enabled": true,
+      "allowedServices": [
+        "acm",
+        "apigateway",
+        "cloudfront",
+        "cognito-idp",
+        "dynamodb",
+        "events",
+        "kms",
+        "lambda",
+        "route53",
+        "s3",
+        "ses",
+        "sns",
+        "wafv2"
+      ]
+    },
+    {
+      "account": "057193910852",
+      "region": "ap-southeast-2",
+      "enabled": false,
+      "allowedServices": []
     }
   ],
   "accessGap": {
     "account": "254572619934",
     "name": "Deepracer",
     "reason": "Existing organisation and deployment role assumptions denied; unchanged."
+  },
+  "orderRidgeReview": {
+    "date": "2026-11-13",
+    "issue": "IC-96",
+    "pollingFrequency": "rate(7 days)",
+    "newServicesOptIn": true,
+    "inactiveRegionDiscoveryDisabled": true,
+    "existingProtection": "Preserve native application/security/budget controls and intentionally paused schedules.",
+    "pollerPolicyRequired": true,
+    "pollerAllowlistSource": "Exact allowedServices array for this account and region; serialize as JSON into MONITORED_SERVICE_ALLOWLIST."
   }
 }

@@ -25,6 +25,7 @@ export enum FREQUENCY {
   "06_HOUR" = "rate(6 hours)",
   "12_HOUR" = "rate(12 hours)",
   "24_HOUR" = "rate(1 day)",
+  "168_HOUR" = "rate(7 days)",
 }
 
 /**
@@ -61,6 +62,7 @@ interface IQuotaUtilizationEvent {
 function getFrequencyInHours(rate: string = <string>process.env.POLLER_FREQUENCY) {
   if (rate == FREQUENCY["06_HOUR"]) return 6;
   if (rate == FREQUENCY["12_HOUR"]) return 12;
+  if (rate == FREQUENCY["168_HOUR"]) return 168;
   else return 24; // default frequency 24 hours
 }
 
