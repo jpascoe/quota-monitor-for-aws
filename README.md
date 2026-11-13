@@ -1,5 +1,7 @@
 # Quota Monitor for AWS
 
+Organisation cost controls: [reviewed billing-gated regional activation and safe enrollment](docs/organisation-monitoring-controls-2026-11-13.md). New regions require current workload billing and inventory evidence; automatic SQ/TA/SNS StackSet enrollment and the SSM enrollment trigger are disabled in source. Preserve explicit existing parameters during unrelated updates.
+
 **Important: This solution will retire in December 2026. Deployments (via CloudFormation or GitHub) will remain operational, but customers will assume responsibility for maintenance and API-related updates post-retirement.**
 
 **Customers can explore using [AWS Service Quotas](https://docs.aws.amazon.com/servicequotas/latest/userguide/intro.html) for proactive usage monitoring and automated management of your service quotas. [Service Quotas Automatic Management](https://docs.aws.amazon.com/servicequotas/latest/userguide/automatic-management.html) provides a fully AWS-managed alternative that covers the most common quota monitoring and alerting needs without requiring customer-managed infrastructure.**

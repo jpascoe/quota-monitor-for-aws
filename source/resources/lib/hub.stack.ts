@@ -77,8 +77,8 @@ export class QuotaMonitorHub extends Stack {
     });
 
     const regionsListCfnParam = new CfnParameter(this, "RegionsList", {
-      description: "Comma separated list of regions like us-east-1,us-east-2 or ALL or leave it blank for ALL",
-      default: "ALL",
+      description: "Reviewed monitored regions. Default is restricted to us-east-1 and ap-southeast-2; workload billing approval is required before activation.",
+      default: "us-east-1,ap-southeast-2",
     });
 
     const snsSpokeRegion = new CfnParameter(this, "SnsSpokeRegion", {
@@ -576,8 +576,7 @@ export class QuotaMonitorHub extends Stack {
         },
       ],
       autoDeployment: {
-        enabled: true,
-        retainStacksOnAccountRemoval: false,
+        enabled: false,
       },
       managedExecution: {
         Active: true,
@@ -615,8 +614,8 @@ export class QuotaMonitorHub extends Stack {
         },
       ],
       autoDeployment: {
-        enabled: true,
-        retainStacksOnAccountRemoval: false,
+        // New account-region activation requires reviewed workload billing and scope.
+        enabled: false,
       },
       managedExecution: {
         Active: true,
@@ -637,8 +636,7 @@ export class QuotaMonitorHub extends Stack {
       templateUrl: this.getTemplateUrl("quota-monitor-sns-spoke.template"),
       parameters: [],
       autoDeployment: {
-        enabled: true,
-        retainStacksOnAccountRemoval: false,
+        enabled: false,
       },
       managedExecution: {
         Active: true,
@@ -718,6 +716,8 @@ export class QuotaMonitorHub extends Stack {
       layers: [utilsLayer.layer],
       memorySize: 512,
     });
+    // Reviewed activation is explicit; SSM edits must not reconcile/create/delete spokes automatically.
+    (deploymentManager.rule.node.defaultChild as events.CfnRule).state = "DISABLED";
     addCfnGuardSuppression(deploymentManager.target, ["LAMBDA_INSIDE_VPC", "LAMBDA_CONCURRENCY_CHECK"]);
 
     /**
