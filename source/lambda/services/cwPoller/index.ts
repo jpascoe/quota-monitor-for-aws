@@ -18,6 +18,32 @@ import {
  */
 const MODULE_NAME = __filename.split("/").pop();
 
+/** Resolve an optional scoped policy before fetching or querying any quota metrics. */
+function getMonitoredServiceAllowlist(): Set<string> | undefined {
+  const required = process.env.QUOTA_SCOPE_POLICY_REQUIRED;
+  if (required !== undefined && required !== "true" && required !== "false") {
+    throw new Error("QUOTA_SCOPE_POLICY_REQUIRED must be true or false");
+  }
+  const raw = process.env.MONITORED_SERVICE_ALLOWLIST;
+  if (!raw || !raw.trim()) {
+    if (required === "true") throw new Error("Required quota service allowlist is missing");
+    return undefined;
+  }
+  let services: unknown;
+  try {
+    services = JSON.parse(raw);
+  } catch {
+    throw new Error("Quota service allowlist must be a JSON array of service codes");
+  }
+  if (
+    !Array.isArray(services) ||
+    !services.every((service) => typeof service === "string" && /^[A-Za-z0-9][A-Za-z0-9-]*$/.test(service))
+  ) {
+    throw new Error("Quota service allowlist must be a JSON array of service codes");
+  }
+  return new Set(services);
+}
+
 /**
  * @description entry point for microservice
  */
@@ -39,8 +65,18 @@ export const handler = async (event: any) => {
   }
   if (!LambdaTriggers.isScheduledEvent(event)) throw new UnsupportedEventException("this event type is not supported");
 
+  const allowlist = getMonitoredServiceAllowlist();
   const ddb = new DynamoDBHelper();
-  const serviceCodes = await ddb.getAllEnabledServices(<string>process.env.SQ_SERVICE_TABLE);
+  const serviceCodes = allowlist
+    ? (
+        await Promise.all(
+          Array.from(allowlist).map(async (service) => {
+            const item = await ddb.getItem(<string>process.env.SQ_SERVICE_TABLE, { ServiceCode: service });
+            return item?.Monitored === true ? service : undefined;
+          })
+        )
+      ).filter((service): service is string => service !== undefined)
+    : await ddb.getAllEnabledServices(<string>process.env.SQ_SERVICE_TABLE);
   logger.debug({
     label: `${MODULE_NAME}/handler/serviceCodes`,
     message: JSON.stringify(serviceCodes),

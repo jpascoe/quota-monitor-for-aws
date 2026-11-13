@@ -19,6 +19,7 @@ const getMetricDataMock = jest.fn();
 const queryQuotasForServiceMock = jest.fn();
 const putEventMock = jest.fn();
 const getAllEnabledServicesMock = jest.fn();
+const getServiceItemMock = jest.fn();
 
 jest.mock("solutions-utils", () => {
   const originalModule = jest.requireActual("solutions-utils");
@@ -34,6 +35,7 @@ jest.mock("solutions-utils", () => {
       return {
         queryQuotasForService: queryQuotasForServiceMock,
         getAllEnabledServices: getAllEnabledServicesMock,
+        getItem: getServiceItemMock,
       };
     },
     EventsHelper: function () {
@@ -164,6 +166,7 @@ describe("CWPoller", () => {
     queryQuotasForServiceMock.mockResolvedValue(quotas);
     putEventMock.mockResolvedValue({});
     getAllEnabledServicesMock.mockResolvedValue(serviceCodes);
+    getServiceItemMock.mockResolvedValue({ Monitored: true });
 
     jest.spyOn(ServiceQuotasHelper.prototype, "generateCWQuery").mockReturnValue([usageQuery, percentageUsageQuery]);
   });
@@ -233,6 +236,96 @@ describe("CWPoller", () => {
     expect(putEventMock).toHaveBeenCalled();
     // Check if the frequency is correctly interpreted as 24 hours
     expect(getMetricDataMock).toHaveBeenCalledWith(expect.any(Date), expect.any(Date), expect.anything());
+  });
+
+  it.each([
+    ["rate(6 hours)", 6],
+    ["rate(12 hours)", 12],
+    ["rate(1 day)", 24],
+    ["rate(7 days)", 168],
+  ])("should query the whole monitoring interval for %s", async (frequency, hours) => {
+    const previousFrequency = process.env.POLLER_FREQUENCY;
+    const now = new Date("2026-11-13T00:00:00Z");
+    jest.useFakeTimers().setSystemTime(now);
+    process.env.POLLER_FREQUENCY = String(frequency);
+    try {
+      await getCWDataForQuotaUtilization([usageQuery]);
+      expect(getMetricDataMock).toHaveBeenCalledWith(
+        new Date(now.getTime() - Number(hours) * 60 * 60 * 1000),
+        now,
+        [usageQuery]
+      );
+    } finally {
+      process.env.POLLER_FREQUENCY = previousFrequency;
+      jest.useRealTimers();
+    }
+  });
+
+  describe("scoped service policy", () => {
+    const previousPolicy = process.env.MONITORED_SERVICE_ALLOWLIST;
+    const previousRequired = process.env.QUOTA_SCOPE_POLICY_REQUIRED;
+    afterEach(() => {
+      if (previousPolicy === undefined) delete process.env.MONITORED_SERVICE_ALLOWLIST;
+      else process.env.MONITORED_SERVICE_ALLOWLIST = previousPolicy;
+      if (previousRequired === undefined) delete process.env.QUOTA_SCOPE_POLICY_REQUIRED;
+      else process.env.QUOTA_SCOPE_POLICY_REQUIRED = previousRequired;
+      getAllEnabledServicesMock.mockResolvedValue(serviceCodes);
+      getServiceItemMock.mockResolvedValue({ Monitored: true });
+    });
+
+    it("should exclude an enabled unknown or retired service from quota queries", async () => {
+      process.env.MONITORED_SERVICE_ALLOWLIST = '["lambda"]';
+      process.env.QUOTA_SCOPE_POLICY_REQUIRED = "true";
+      getAllEnabledServicesMock.mockResolvedValue(["lambda", "retired-service"]);
+      await handler(event);
+      expect(getAllEnabledServicesMock).not.toHaveBeenCalled();
+      expect(getServiceItemMock.mock.calls.map(([, key]) => key.ServiceCode)).toEqual(["lambda"]);
+      expect(queryQuotasForServiceMock.mock.calls.map(([, service]) => service)).toEqual(["lambda"]);
+    });
+
+    it("should not poll a disabled allowlisted service", async () => {
+      process.env.MONITORED_SERVICE_ALLOWLIST = '["lambda","sns"]';
+      process.env.QUOTA_SCOPE_POLICY_REQUIRED = "true";
+      getServiceItemMock.mockImplementation(async (_table, key) => ({ Monitored: key.ServiceCode === "lambda" }));
+      await handler(event);
+      expect(getAllEnabledServicesMock).not.toHaveBeenCalled();
+      expect(getServiceItemMock.mock.calls.map(([, key]) => key.ServiceCode)).toEqual(["lambda", "sns"]);
+      expect(queryQuotasForServiceMock.mock.calls.map(([, service]) => service)).toEqual(["lambda"]);
+    });
+
+    it.each([undefined, "not-json", '{"lambda":true}', '[""]', "[42]", '["bad service"]'])(
+      "should fail before quota or metric reads for missing/malformed required policy %s",
+      async (policy) => {
+        process.env.QUOTA_SCOPE_POLICY_REQUIRED = "true";
+        if (policy === undefined) delete process.env.MONITORED_SERVICE_ALLOWLIST;
+        else process.env.MONITORED_SERVICE_ALLOWLIST = policy;
+        await expect(handler(event)).rejects.toThrow(/allowlist/);
+        expect(getAllEnabledServicesMock).not.toHaveBeenCalled();
+        expect(getServiceItemMock).not.toHaveBeenCalled();
+        expect(queryQuotasForServiceMock).not.toHaveBeenCalled();
+        expect(getMetricDataMock).not.toHaveBeenCalled();
+      }
+    );
+
+    it("should read no quota metrics for an explicit empty policy", async () => {
+      process.env.MONITORED_SERVICE_ALLOWLIST = "[]";
+      process.env.QUOTA_SCOPE_POLICY_REQUIRED = "true";
+      await handler(event);
+      expect(getAllEnabledServicesMock).not.toHaveBeenCalled();
+      expect(getServiceItemMock).not.toHaveBeenCalled();
+      expect(queryQuotasForServiceMock).not.toHaveBeenCalled();
+      expect(getMetricDataMock).not.toHaveBeenCalled();
+    });
+
+    it("should stop before metric reads when an approved service cannot be read", async () => {
+      process.env.MONITORED_SERVICE_ALLOWLIST = '["lambda"]';
+      process.env.QUOTA_SCOPE_POLICY_REQUIRED = "true";
+      getServiceItemMock.mockRejectedValue(new Error("AccessDenied"));
+      await expect(handler(event)).rejects.toThrow("AccessDenied");
+      expect(getAllEnabledServicesMock).not.toHaveBeenCalled();
+      expect(queryQuotasForServiceMock).not.toHaveBeenCalled();
+      expect(getMetricDataMock).not.toHaveBeenCalled();
+    });
   });
 
   it("should return if no quotas are found", async () => {

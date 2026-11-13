@@ -1,0 +1,7 @@
+# Quota discovery cost control — 12 October 2026
+
+IC-96: newly discovered services now default to Monitored=false. Existing enabled and disabled service choices remain intact; explicitly selected SageMaker/Connect parameters retain their existing semantics. Review the account, region, workload and quota before setting Monitored=true in the existing service table. Weekly polling remains unchanged; unused regional schedules remain disabled. Recheck the approved monitoring-scope-policy.json after stack deployment.
+
+Validation: 32 quota-list-manager tests and TypeScript builds passed. Exactly one compiled default was changed in 18 existing discovery Lambda artifacts, with revision/code-hash guards and post-update hash verification. Runtime, IAM, schedules and environments were not changed. Existing wrapper functions were not patched. DeepRacer account 254572619934 remains inaccessible; its two scopes were not changed. Full-stack deployment is excluded because it can include unrelated infrastructure changes. Source delivery prevents an older deployment restoring automatic opt-in. Rollback ZIPs and receipts are retained privately in the central evidence directory.
+
+Offline CDK synthesis passes with tested fresh quota code and existing unchanged packaged dependency assets. No whole-stack diff or deployment occurred.

@@ -17,6 +17,7 @@ import {
   CfnCondition,
   Aspects,
   ArnFormat,
+  Aws,
 } from "aws-cdk-lib";
 import path from "path";
 import { LambdaToDDB } from "./lambda-dynamodb.construct";
@@ -75,7 +76,7 @@ export class QuotaMonitorSQSpoke extends Stack {
 
     const frequency = new CfnParameter(this, "MonitoringFrequency", {
       type: "String",
-      default: "rate(12 hours)",
+      default: "rate(7 days)",
       allowedValues: ["rate(6 hours)", "rate(12 hours)", "rate(1 day)", "rate(7 days)"],
     });
 
@@ -85,15 +86,28 @@ export class QuotaMonitorSQSpoke extends Stack {
       allowedValues: ["Yes", "No"],
     });
 
+    const monitoredServiceAllowlist = new CfnParameter(this, "MonitoredServiceAllowlist", {
+      type: "String",
+      default: "",
+      description: "Optional JSON array of reviewed service codes. Empty preserves legacy service selections.",
+    });
+
+    const quotaScopePolicyRequired = new CfnParameter(this, "QuotaScopePolicyRequired", {
+      type: "String",
+      default: "false",
+      allowedValues: ["true", "false"],
+      description: "Require a valid explicit service allowlist before quota metric reads.",
+    });
+
     const sageMakerMonitoring = new CfnParameter(this, "SageMakerMonitoring", {
       type: "String",
-      default: "Yes",
+      default: "No",
       allowedValues: ["Yes", "No"],
     });
 
     const connectMonitoring = new CfnParameter(this, "ConnectMonitoring", {
       type: "String",
-      default: "Yes",
+      default: "No",
       allowedValues: ["Yes", "No"],
     });
 
@@ -102,6 +116,10 @@ export class QuotaMonitorSQSpoke extends Stack {
 
     const spokeSnsRegionExists = new CfnCondition(this, "SpokeSnsRegionExists", {
       expression: Fn.conditionNot(Fn.conditionEquals(spokeSnsRegion, "")),
+    });
+
+    const requiredScopePolicy = new CfnCondition(this, "QuotaScopePolicyRequiredCondition", {
+      expression: Fn.conditionEquals(quotaScopePolicyRequired.valueAsString, "true"),
     });
 
     //=============================================================================================
@@ -325,6 +343,8 @@ export class QuotaMonitorSQSpoke extends Stack {
         POLLER_FREQUENCY: frequency.valueAsString,
         THRESHOLD: threshold.valueAsString,
         REPORT_OK_NOTIFICATIONS: reportOKNotifications.valueAsString,
+        MONITORED_SERVICE_ALLOWLIST: monitoredServiceAllowlist.valueAsString,
+        QUOTA_SCOPE_POLICY_REQUIRED: quotaScopePolicyRequired.valueAsString,
       },
       memorySize: 512,
       layers: [utilsLayer.layer],
@@ -340,11 +360,14 @@ export class QuotaMonitorSQSpoke extends Stack {
         resources: [quotaTable.tableArn],
       })
     );
-    // permission to scan the service table
+    // Required scoped policies use exact-key reads only; retain scan permission solely for legacy mode.
     cwPoller.target.addToRolePolicy(
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
-        actions: ["dynamodb:Scan"],
+        actions: [
+          "dynamodb:GetItem",
+          Fn.conditionIf(requiredScopePolicy.logicalId, Aws.NO_VALUE, "dynamodb:Scan").toString(),
+        ],
         resources: [serviceTable.tableArn],
       })
     );

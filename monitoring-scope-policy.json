@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-06",
+  "date": "2026-11-13",
   "issue": "IC-96",
   "quotaScopes": [
     {
@@ -7,10 +7,7 @@
       "region": "ap-southeast-2",
       "enabled": true,
       "allowedServices": [
-        "cognito-identity",
-        "cognito-idp",
         "dynamodb",
-        "events",
         "lambda",
         "s3",
         "ses",
@@ -22,10 +19,8 @@
       "region": "us-east-1",
       "enabled": true,
       "allowedServices": [
-        "cognito-identity",
         "cognito-idp",
         "dynamodb",
-        "events",
         "lambda",
         "s3",
         "ses",
@@ -33,6 +28,32 @@
       ]
     },
     {
+      "account": "057193910852",
+      "region": "ap-southeast-2",
+      "enabled": false,
+      "allowedServices": []
+    },
+    {
+      "account": "057193910852",
+      "region": "us-east-1",
+      "enabled": true,
+      "allowedServices": [
+        "acm",
+        "apigateway",
+        "cloudfront",
+        "cognito-idp",
+        "dynamodb",
+        "events",
+        "kms",
+        "lambda",
+        "route53",
+        "s3",
+        "ses",
+        "sns",
+        "wafv2"
+      ]
+    },
+    {
       "account": "131228246479",
       "region": "ap-southeast-2",
       "enabled": false,
@@ -43,13 +64,18 @@
       "region": "us-east-1",
       "enabled": true,
       "allowedServices": [
-        "cognito-identity",
+        "acm",
+        "apigateway",
+        "cloudfront",
         "cognito-idp",
         "dynamodb",
         "events",
+        "kms",
         "lambda",
         "s3",
-        "ses"
+        "ses",
+        "sns",
+        "sqs"
       ]
     },
     {
@@ -63,7 +89,9 @@
       "region": "us-east-1",
       "enabled": true,
       "allowedServices": [
-        "dynamodb"
+        "dynamodb",
+        "s3",
+        "sns"
       ]
     },
     {
@@ -71,10 +99,7 @@
       "region": "ap-southeast-2",
       "enabled": true,
       "allowedServices": [
-        "cognito-identity",
-        "cognito-idp",
         "dynamodb",
-        "events",
         "lambda",
         "s3",
         "ses"
@@ -89,8 +114,10 @@
     {
       "account": "493987692616",
       "region": "ap-southeast-2",
-      "enabled": false,
-      "allowedServices": []
+      "enabled": true,
+      "allowedServices": [
+        "s3"
+      ]
     },
     {
       "account": "493987692616",
@@ -104,61 +131,60 @@
       "enabled": true,
       "allowedServices": [
         "apigateway",
-        "bedrock",
-        "bedrock-agentcore",
-        "cognito-identity",
         "cognito-idp",
-        "dynamodb",
-        "events",
         "lambda",
         "s3",
         "ses",
-        "sqs",
-        "transcribe"
+        "sqs"
       ]
     },
     {
       "account": "505435643877",
       "region": "us-east-1",
+      "enabled": false,
+      "allowedServices": []
+    },
+    {
+      "account": "666512941180",
+      "region": "ap-southeast-2",
+      "enabled": false,
+      "allowedServices": []
+    },
+    {
+      "account": "666512941180",
+      "region": "us-east-1",
+      "enabled": false,
+      "allowedServices": []
+    },
+    {
+      "account": "767397675128",
+      "region": "ap-southeast-2",
       "enabled": true,
       "allowedServices": [
+        "apigateway",
+        "bedrock",
+        "bedrock-agentcore",
+        "cognito-idp",
+        "dynamodb",
+        "ecr",
+        "events",
+        "geo",
+        "kms",
+        "lambda",
+        "s3",
+        "ses",
+        "sns",
+        "sqs"
+      ]
+    },
+    {
+      "account": "767397675128",
+      "region": "us-east-1",
+      "enabled": true,
+      "allowedServices": [
+        "acm",
         "cloudfront",
-        "wafv2"
-      ]
-    },
-    {
-      "account": "666512941180",
-      "region": "ap-southeast-2",
-      "enabled": false,
-      "allowedServices": []
-    },
-    {
-      "account": "666512941180",
-      "region": "us-east-1",
-      "enabled": false,
-      "allowedServices": []
-    },
-    {
-      "account": "767397675128",
-      "region": "ap-southeast-2",
-      "enabled": true,
-      "allowedServices": [
-        "cognito-identity",
-        "cognito-idp",
-        "dynamodb",
-        "events",
-        "lambda",
-        "s3",
-        "ses",
-        "sqs"
-      ]
-    },
-    {
-      "account": "767397675128",
-      "region": "us-east-1",
-      "enabled": true,
-      "allowedServices": [
-        "cloudfront"
+        "s3"
       ]
     },
     {
@@ -166,13 +192,11 @@
       "region": "ap-southeast-2",
       "enabled": true,
       "allowedServices": [
-        "cognito-identity",
-        "cognito-idp",
         "dynamodb",
-        "events",
         "lambda",
         "s3",
         "ses",
+        "sns",
         "sqs"
       ]
     },
@@ -181,11 +205,879 @@
       "region": "us-east-1",
       "enabled": false,
       "allowedServices": []
+    },
+    {
+      "account": "570118540662",
+      "region": "ap-southeast-2",
+      "enabled": false,
+      "allowedServices": [],
+      "scopeType": "orphan-discovery"
+    },
+    {
+      "account": "570118540662",
+      "region": "us-east-1",
+      "enabled": false,
+      "allowedServices": [],
+      "scopeType": "orphan-discovery"
     }
   ],
   "accessGap": {
     "account": "254572619934",
     "name": "Deepracer",
     "reason": "Existing organisation and deployment role assumptions denied; unchanged."
+  },
+  "orderRidgeReview": {
+    "date": "2026-11-13",
+    "issue": "IC-96",
+    "pollingFrequency": "rate(7 days)",
+    "newServicesOptIn": true,
+    "inactiveRegionDiscoveryDisabled": true,
+    "existingProtection": "Preserve native application/security/budget controls and intentionally paused schedules.",
+    "pollerPolicyRequired": true,
+    "pollerAllowlistSource": "Exact allowedServices array for this account and region; serialize as JSON into MONITORED_SERVICE_ALLOWLIST.",
+    "eligibleRegions": [
+      "ap-southeast-2",
+      "us-east-1"
+    ],
+    "billingEvidenceRequired": true,
+    "billingEvidenceRule": "Require reviewed workload billing in the exact account and region before enabling monitoring; quota-monitor-only charges are not sufficient.",
+    "regionalBillingEvidence": {
+      "us-east-1": {
+        "account": "057193910852",
+        "region": "us-east-1",
+        "source": "AWS Cost Explorer",
+        "observedAt": "2026-11-13",
+        "period": {
+          "start": "2026-10-01",
+          "endExclusive": "2026-11-13"
+        },
+        "excludedRecordTypes": [
+          "Credit",
+          "Refund"
+        ],
+        "estimatedByMonth": {
+          "2026-10": false,
+          "2026-11": true
+        },
+        "monitorOnly": false,
+        "workloadServices": [
+          {
+            "service": "Amazon API Gateway",
+            "amountUsd": "0.001465",
+            "workloadEvidence": "Live OrderRidge HTTP API in us-east-1, corroborated by account workload inventory."
+          },
+          {
+            "service": "Amazon Simple Email Service",
+            "amountUsd": "0.00816",
+            "workloadEvidence": "Live OrderRidge Cognito mail integration in us-east-1, corroborated by account workload inventory."
+          }
+        ]
+      }
+    }
+  },
+  "organisationReview": {
+    "date": "2026-11-13",
+    "issue": "IC-96",
+    "billingEvidenceRequired": true,
+    "eligibleRegions": [
+      "ap-southeast-2",
+      "us-east-1"
+    ],
+    "pollingFrequency": "rate(7 days)",
+    "newServicesOptIn": true,
+    "pollerPolicyRequired": true,
+    "inactiveRegionDiscoveryDisabled": true,
+    "regionalBillingEvidence": {
+      "007427784471:us-east-1": {
+        "account": "007427784471",
+        "region": "us-east-1",
+        "source": "AWS Cost Explorer",
+        "observedAt": "2026-11-13",
+        "period": {
+          "start": "2026-10-01",
+          "endExclusive": "2026-11-13"
+        },
+        "excludedRecordTypes": [
+          "Credit",
+          "Refund"
+        ],
+        "estimatedByMonth": {
+          "2026-10": false,
+          "2026-11": true
+        },
+        "monitorOnly": false,
+        "workloadServices": [
+          {
+            "service": "Amazon Simple Email Service",
+            "amountUsd": "0.0139583004",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "007427784471",
+                "region": "us-east-1",
+                "kind": "ses-domain-identity",
+                "identifier": "growthexponent.com",
+                "monitoringResource": false
+              },
+              {
+                "account": "007427784471",
+                "region": "us-east-1",
+                "kind": "ses-domain-identity",
+                "identifier": "invisiblesystems.xyz",
+                "monitoringResource": false
+              }
+            ]
+          },
+          {
+            "service": "Amazon Simple Storage Service",
+            "amountUsd": "0.4089891457",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "007427784471",
+                "region": "us-east-1",
+                "kind": "s3-bucket",
+                "identifier": "invisiblesystems.xyz",
+                "monitoringResource": false
+              },
+              {
+                "account": "007427784471",
+                "region": "us-east-1",
+                "kind": "s3-bucket",
+                "identifier": "the-invisible-company-production-private-poster",
+                "monitoringResource": false
+              }
+            ]
+          },
+          {
+            "service": "Amazon DynamoDB",
+            "amountUsd": "0.2630902734",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "007427784471",
+                "region": "us-east-1",
+                "kind": "dynamodb-table",
+                "identifier": "the-invisible-company-production",
+                "monitoringResource": false
+              }
+            ]
+          }
+        ],
+        "attributionLimitation": "Service-level regional billing and resource ownership corroborate eligibility, not exact charged-resource attribution. No CUR or resource-level billing capability was added."
+      },
+      "007427784471:ap-southeast-2": {
+        "account": "007427784471",
+        "region": "ap-southeast-2",
+        "source": "AWS Cost Explorer",
+        "observedAt": "2026-11-13",
+        "period": {
+          "start": "2026-10-01",
+          "endExclusive": "2026-11-13"
+        },
+        "excludedRecordTypes": [
+          "Credit",
+          "Refund"
+        ],
+        "estimatedByMonth": {
+          "2026-10": false,
+          "2026-11": true
+        },
+        "monitorOnly": false,
+        "workloadServices": [
+          {
+            "service": "Amazon Simple Storage Service",
+            "amountUsd": "0.2443780154",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "007427784471",
+                "region": "ap-southeast-2",
+                "kind": "s3-bucket",
+                "identifier": "course-content-prod.growthexponent.com",
+                "monitoringResource": false
+              },
+              {
+                "account": "007427784471",
+                "region": "ap-southeast-2",
+                "kind": "s3-bucket",
+                "identifier": "files.growthexponent.com",
+                "monitoringResource": false
+              }
+            ]
+          },
+          {
+            "service": "Amazon DynamoDB",
+            "amountUsd": "0.0097674027",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "007427784471",
+                "region": "ap-southeast-2",
+                "kind": "dynamodb-table",
+                "identifier": "app-tge-website-prod",
+                "monitoringResource": false
+              }
+            ]
+          }
+        ],
+        "attributionLimitation": "Service-level regional billing and resource ownership corroborate eligibility, not exact charged-resource attribution. No CUR or resource-level billing capability was added."
+      },
+      "057193910852:us-east-1": {
+        "account": "057193910852",
+        "region": "us-east-1",
+        "source": "AWS Cost Explorer",
+        "observedAt": "2026-11-13",
+        "period": {
+          "start": "2026-10-01",
+          "endExclusive": "2026-11-13"
+        },
+        "excludedRecordTypes": [
+          "Credit",
+          "Refund"
+        ],
+        "estimatedByMonth": {
+          "2026-10": false,
+          "2026-11": true
+        },
+        "monitorOnly": false,
+        "workloadServices": [
+          {
+            "service": "Amazon API Gateway",
+            "amountUsd": "0.001465",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "057193910852",
+                "region": "us-east-1",
+                "kind": "http-api",
+                "identifier": "orderridge",
+                "monitoringResource": false
+              }
+            ]
+          },
+          {
+            "service": "Amazon Simple Email Service",
+            "amountUsd": "0.00816",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "057193910852",
+                "region": "us-east-1",
+                "kind": "ses-domain-identity",
+                "identifier": "orderridge.com",
+                "monitoringResource": false
+              }
+            ]
+          },
+          {
+            "service": "Amazon Simple Storage Service",
+            "amountUsd": "0.0171254256",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "057193910852",
+                "region": "us-east-1",
+                "kind": "s3-bucket",
+                "identifier": "orderridge-assets-bucket-qacpia7poj6q",
+                "monitoringResource": false
+              },
+              {
+                "account": "057193910852",
+                "region": "us-east-1",
+                "kind": "s3-bucket",
+                "identifier": "orderridge-evidence-inventory-057193910852-8a4da616d078",
+                "monitoringResource": false
+              }
+            ]
+          }
+        ],
+        "attributionLimitation": "Service-level regional billing and resource ownership corroborate eligibility, not exact charged-resource attribution. No CUR or resource-level billing capability was added."
+      },
+      "131228246479:us-east-1": {
+        "account": "131228246479",
+        "region": "us-east-1",
+        "source": "AWS Cost Explorer",
+        "observedAt": "2026-11-13",
+        "period": {
+          "start": "2026-10-01",
+          "endExclusive": "2026-11-13"
+        },
+        "excludedRecordTypes": [
+          "Credit",
+          "Refund"
+        ],
+        "estimatedByMonth": {
+          "2026-10": false,
+          "2026-11": true
+        },
+        "monitorOnly": false,
+        "workloadServices": [
+          {
+            "service": "Amazon API Gateway",
+            "amountUsd": "0.0020335",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "131228246479",
+                "region": "us-east-1",
+                "kind": "rest-api",
+                "identifier": "PaymentApi",
+                "monitoringResource": false
+              },
+              {
+                "account": "131228246479",
+                "region": "us-east-1",
+                "kind": "rest-api",
+                "identifier": "Api",
+                "monitoringResource": false
+              }
+            ]
+          },
+          {
+            "service": "Amazon Simple Email Service",
+            "amountUsd": "0.0056",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "131228246479",
+                "region": "us-east-1",
+                "kind": "ses-domain-identity",
+                "identifier": "sellbarterbuy.com",
+                "monitoringResource": false
+              }
+            ]
+          },
+          {
+            "service": "Amazon Simple Storage Service",
+            "amountUsd": "0.8380896168",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "131228246479",
+                "region": "us-east-1",
+                "kind": "s3-bucket",
+                "identifier": "admin.sellbarterbuy.com",
+                "monitoringResource": false
+              },
+              {
+                "account": "131228246479",
+                "region": "us-east-1",
+                "kind": "s3-bucket",
+                "identifier": "auth.sellbarterbuy.com",
+                "monitoringResource": false
+              }
+            ]
+          }
+        ],
+        "attributionLimitation": "Service-level regional billing and resource ownership corroborate eligibility, not exact charged-resource attribution. No CUR or resource-level billing capability was added."
+      },
+      "182399708983:us-east-1": {
+        "account": "182399708983",
+        "region": "us-east-1",
+        "source": "AWS Cost Explorer",
+        "observedAt": "2026-11-13",
+        "period": {
+          "start": "2026-10-01",
+          "endExclusive": "2026-11-13"
+        },
+        "excludedRecordTypes": [
+          "Credit",
+          "Refund"
+        ],
+        "estimatedByMonth": {
+          "2026-10": false,
+          "2026-11": true
+        },
+        "monitorOnly": false,
+        "workloadServices": [
+          {
+            "service": "Amazon Simple Storage Service",
+            "amountUsd": "0.0002413184",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "182399708983",
+                "region": "us-east-1",
+                "kind": "s3-bucket",
+                "identifier": "dono-tracker-website",
+                "monitoringResource": false
+              },
+              {
+                "account": "182399708983",
+                "region": "us-east-1",
+                "kind": "s3-bucket",
+                "identifier": "dono-tracker-logs",
+                "monitoringResource": false
+              }
+            ]
+          },
+          {
+            "service": "Amazon DynamoDB",
+            "amountUsd": "0.0095070945",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "182399708983",
+                "region": "us-east-1",
+                "kind": "dynamodb-table",
+                "identifier": "DonoTracker",
+                "monitoringResource": false
+              }
+            ]
+          }
+        ],
+        "attributionLimitation": "Service-level regional billing and resource ownership corroborate eligibility, not exact charged-resource attribution. No CUR or resource-level billing capability was added."
+      },
+      "231351515510:ap-southeast-2": {
+        "account": "231351515510",
+        "region": "ap-southeast-2",
+        "source": "AWS Cost Explorer",
+        "observedAt": "2026-11-13",
+        "period": {
+          "start": "2026-10-01",
+          "endExclusive": "2026-11-13"
+        },
+        "excludedRecordTypes": [
+          "Credit",
+          "Refund"
+        ],
+        "estimatedByMonth": {
+          "2026-10": false,
+          "2026-11": true
+        },
+        "monitorOnly": false,
+        "workloadServices": [
+          {
+            "service": "Amazon Simple Storage Service",
+            "amountUsd": "0.0016588344",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "231351515510",
+                "region": "ap-southeast-2",
+                "kind": "s3-bucket",
+                "identifier": "ritzwarehouse.com.au",
+                "monitoringResource": false
+              },
+              {
+                "account": "231351515510",
+                "region": "ap-southeast-2",
+                "kind": "s3-bucket",
+                "identifier": "dev.ritzwarehouse.com.au",
+                "monitoringResource": false
+              }
+            ]
+          },
+          {
+            "service": "Amazon DynamoDB",
+            "amountUsd": "0.0098985059",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "231351515510",
+                "region": "ap-southeast-2",
+                "kind": "dynamodb-table",
+                "identifier": "ritz-shelving-and-warehouse-dev-single-table",
+                "monitoringResource": false
+              },
+              {
+                "account": "231351515510",
+                "region": "ap-southeast-2",
+                "kind": "dynamodb-table",
+                "identifier": "ritz-shelving-and-warehouse-prod-single-table",
+                "monitoringResource": false
+              }
+            ]
+          }
+        ],
+        "attributionLimitation": "Service-level regional billing and resource ownership corroborate eligibility, not exact charged-resource attribution. No CUR or resource-level billing capability was added."
+      },
+      "493987692616:ap-southeast-2": {
+        "account": "493987692616",
+        "region": "ap-southeast-2",
+        "source": "AWS Cost Explorer",
+        "observedAt": "2026-11-13",
+        "period": {
+          "start": "2026-10-01",
+          "endExclusive": "2026-11-13"
+        },
+        "excludedRecordTypes": [
+          "Credit",
+          "Refund"
+        ],
+        "estimatedByMonth": {
+          "2026-10": false,
+          "2026-11": true
+        },
+        "monitorOnly": false,
+        "workloadServices": [
+          {
+            "service": "Amazon Simple Storage Service",
+            "amountUsd": "0.0000842888",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "493987692616",
+                "region": "ap-southeast-2",
+                "kind": "s3-bucket",
+                "identifier": "files.vmcarpentry.com.au",
+                "monitoringResource": false
+              },
+              {
+                "account": "493987692616",
+                "region": "ap-southeast-2",
+                "kind": "s3-bucket",
+                "identifier": "vmcarpentry.com.au",
+                "monitoringResource": false
+              }
+            ]
+          }
+        ],
+        "attributionLimitation": "Service-level regional billing and resource ownership corroborate eligibility, not exact charged-resource attribution. No CUR or resource-level billing capability was added."
+      },
+      "505435643877:ap-southeast-2": {
+        "account": "505435643877",
+        "region": "ap-southeast-2",
+        "source": "AWS Cost Explorer",
+        "observedAt": "2026-11-13",
+        "period": {
+          "start": "2026-10-01",
+          "endExclusive": "2026-11-13"
+        },
+        "excludedRecordTypes": [
+          "Credit",
+          "Refund"
+        ],
+        "estimatedByMonth": {
+          "2026-10": false,
+          "2026-11": true
+        },
+        "monitorOnly": false,
+        "workloadServices": [
+          {
+            "service": "Amazon Simple Storage Service",
+            "amountUsd": "0.0165719444",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "505435643877",
+                "region": "ap-southeast-2",
+                "kind": "s3-bucket",
+                "identifier": "haa-public-web-505435643877-ap-southeast-2",
+                "monitoringResource": false
+              },
+              {
+                "account": "505435643877",
+                "region": "ap-southeast-2",
+                "kind": "s3-bucket",
+                "identifier": "tf-state-505435643877-ap-southeast-2-prod",
+                "monitoringResource": false
+              }
+            ]
+          }
+        ],
+        "attributionLimitation": "Service-level regional billing and resource ownership corroborate eligibility, not exact charged-resource attribution. No CUR or resource-level billing capability was added."
+      },
+      "767397675128:us-east-1": {
+        "account": "767397675128",
+        "region": "us-east-1",
+        "source": "AWS Cost Explorer",
+        "observedAt": "2026-11-13",
+        "period": {
+          "start": "2026-10-01",
+          "endExclusive": "2026-11-13"
+        },
+        "excludedRecordTypes": [
+          "Credit",
+          "Refund"
+        ],
+        "estimatedByMonth": {
+          "2026-10": false,
+          "2026-11": true
+        },
+        "monitorOnly": false,
+        "workloadServices": [
+          {
+            "service": "Amazon CloudFront",
+            "amountUsd": "0.0000000025",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "767397675128",
+                "region": "us-east-1",
+                "kind": "cloudfront-global-control-plane",
+                "identifier": "arn:aws:cloudfront::767397675128:distribution/E2ECP2XM0QTFG1",
+                "monitoringResource": false
+              }
+            ]
+          },
+          {
+            "service": "Amazon Simple Storage Service",
+            "amountUsd": "0.0003195551",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "767397675128",
+                "region": "us-east-1",
+                "kind": "s3-bucket",
+                "identifier": "is-great-blog-767397675128-us-east-1-prod",
+                "monitoringResource": false
+              },
+              {
+                "account": "767397675128",
+                "region": "us-east-1",
+                "kind": "s3-bucket",
+                "identifier": "is-great-blog-767397675128-us-east-1-dev",
+                "monitoringResource": false
+              }
+            ]
+          }
+        ],
+        "attributionLimitation": "Service-level regional billing and resource ownership corroborate eligibility, not exact charged-resource attribution. No CUR or resource-level billing capability was added."
+      },
+      "767397675128:ap-southeast-2": {
+        "account": "767397675128",
+        "region": "ap-southeast-2",
+        "source": "AWS Cost Explorer",
+        "observedAt": "2026-11-13",
+        "period": {
+          "start": "2026-10-01",
+          "endExclusive": "2026-11-13"
+        },
+        "excludedRecordTypes": [
+          "Credit",
+          "Refund"
+        ],
+        "estimatedByMonth": {
+          "2026-10": false,
+          "2026-11": true
+        },
+        "monitorOnly": false,
+        "workloadServices": [
+          {
+            "service": "Amazon API Gateway",
+            "amountUsd": "0.011310253",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "767397675128",
+                "region": "ap-southeast-2",
+                "kind": "http-api",
+                "identifier": "isgreat-production-http-api",
+                "monitoringResource": false
+              }
+            ]
+          },
+          {
+            "service": "Amazon Cognito",
+            "amountUsd": "0.10575",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "767397675128",
+                "region": "ap-southeast-2",
+                "kind": "cognito-user-pool",
+                "identifier": "isgreat-prod-admins",
+                "monitoringResource": false
+              },
+              {
+                "account": "767397675128",
+                "region": "ap-southeast-2",
+                "kind": "cognito-user-pool",
+                "identifier": "isgreat-prod-editorial-controller",
+                "monitoringResource": false
+              }
+            ]
+          },
+          {
+            "service": "Amazon Simple Storage Service",
+            "amountUsd": "3.6546380559",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "767397675128",
+                "region": "ap-southeast-2",
+                "kind": "s3-bucket",
+                "identifier": "fremantle.isgreat.au",
+                "monitoringResource": false
+              },
+              {
+                "account": "767397675128",
+                "region": "ap-southeast-2",
+                "kind": "s3-bucket",
+                "identifier": "isgreat-cloudtrail-ef529889ac657b9006918ec28b",
+                "monitoringResource": false
+              }
+            ]
+          }
+        ],
+        "attributionLimitation": "Service-level regional billing and resource ownership corroborate eligibility, not exact charged-resource attribution. No CUR or resource-level billing capability was added."
+      },
+      "832721970534:ap-southeast-2": {
+        "account": "832721970534",
+        "region": "ap-southeast-2",
+        "source": "AWS Cost Explorer",
+        "observedAt": "2026-11-13",
+        "period": {
+          "start": "2026-10-01",
+          "endExclusive": "2026-11-13"
+        },
+        "excludedRecordTypes": [
+          "Credit",
+          "Refund"
+        ],
+        "estimatedByMonth": {
+          "2026-10": false,
+          "2026-11": true
+        },
+        "monitorOnly": false,
+        "workloadServices": [
+          {
+            "service": "Amazon Simple Storage Service",
+            "amountUsd": "0.1621818337",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "832721970534",
+                "region": "ap-southeast-2",
+                "kind": "s3-bucket",
+                "identifier": "app-direct-earthworks-prod",
+                "monitoringResource": false
+              },
+              {
+                "account": "832721970534",
+                "region": "ap-southeast-2",
+                "kind": "s3-bucket",
+                "identifier": "directearthworkswa.com",
+                "monitoringResource": false
+              }
+            ]
+          },
+          {
+            "service": "Amazon DynamoDB",
+            "amountUsd": "0.0098247666",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "832721970534",
+                "region": "ap-southeast-2",
+                "kind": "dynamodb-table",
+                "identifier": "app-direct-earthworks-dev",
+                "monitoringResource": false
+              },
+              {
+                "account": "832721970534",
+                "region": "ap-southeast-2",
+                "kind": "dynamodb-table",
+                "identifier": "app-direct-earthworks-prod",
+                "monitoringResource": false
+              }
+            ]
+          },
+          {
+            "service": "AWS Lambda",
+            "amountUsd": "0.0000083205",
+            "workloadEvidence": "Positive account/region service billing is corroborated by current same-region non-monitor resources. This does not attribute the aggregate charge to an individual resource without CUR. Global CloudFront control-plane resources are anchored in us-east-1 where billing explicitly identifies that region.",
+            "resources": [
+              {
+                "account": "832721970534",
+                "region": "ap-southeast-2",
+                "kind": "lambda-function",
+                "identifier": "job-prod",
+                "monitoringResource": false
+              },
+              {
+                "account": "832721970534",
+                "region": "ap-southeast-2",
+                "kind": "lambda-function",
+                "identifier": "user-prod",
+                "monitoringResource": false
+              }
+            ]
+          }
+        ],
+        "attributionLimitation": "Service-level regional billing and resource ownership corroborate eligibility, not exact charged-resource attribution. No CUR or resource-level billing capability was added."
+      }
+    },
+    "accountsWithoutCollectors": [
+      {
+        "account": "570118540662",
+        "region": "us-east-1",
+        "reason": "No collector exists; do not create one."
+      },
+      {
+        "account": "570118540662",
+        "region": "ap-southeast-2",
+        "reason": "No collector exists; do not create one."
+      },
+      {
+        "account": "817495191110",
+        "region": "us-east-1",
+        "reason": "No collector exists; do not create one."
+      },
+      {
+        "account": "817495191110",
+        "region": "ap-southeast-2",
+        "reason": "No collector exists; do not create one."
+      }
+    ],
+    "scopeRationales": [
+      {
+        "account": "007427784471",
+        "rationale": "Both regions contain genuine app functions/data/buckets and positive same-region S3 billing. Exclude DashboardUsers* pools (QM infrastructure). Virginia SES has direct billing. Bedrock billed in October but no current app resource is inventoried; preserve existing justified coverage or check source/API use before adding. No actual application EventBridge schedule is shown; BillingCollector schedule is QM."
+      },
+      {
+        "account": "057193910852",
+        "rationale": "Already independently verified OrderRidge policy; keep exact13 Virginia codes and Sydney off. Regional API Gateway/SES evidence is positive."
+      },
+      {
+        "account": "131228246479",
+        "rationale": "Virginia full ModelShop/SBB app and genuine user pools/API/queue/topics/CloudFront, with direct API Gateway/SES billing. Sydney has no app resources/buckets; off."
+      },
+      {
+        "account": "182399708983",
+        "rationale": "Virginia retains named DonoTracker table, website/log buckets and notification topic, with positive same-region DDB/S3 charges. No Lambda/API/user pool evidenced. Identity pools were not inventoried; inspect before removing any previously justified cognito-identity coverage."
+      },
+      {
+        "account": "231351515510",
+        "rationale": "Sydney20 app Lambda, two data tables, appwebsite buckets and positive regional S3/DDB charges corroborate eligibility. No Virginia app resources/buckets; off."
+      },
+      {
+        "account": "493987692616",
+        "rationale": "Sydney website/files/state buckets with positive S3 billing corroborate static/storage-only scope. S3 only; no Lambda/API/data table. Virginia no app resources/buckets; off."
+      },
+      {
+        "account": "505435643877",
+        "rationale": "Sydney static website bucket plus positive S3 billing establishes necessary S3 coverage. Residual backend API/Lambda/Cognito/queues remain physically present although owner confirmed static transition; retain these conservatively until explicit complete retirement/activity evidence establishes otherwise. Do not restore WAF or alarms. Virginia has no regional app/bucket; global distribution alone does not justify a regional quota poller under strict billing rule."
+      },
+      {
+        "account": "570118540662",
+        "rationale": "No quota pollers currently exist. Do not create any. Active workloads and positive billing in both regions remain protected by existing application alarms; preserve them."
+      },
+      {
+        "account": "666512941180",
+        "rationale": "No non-QM resources or buckets in either eligible region; billed requests alone do not qualify. Both off."
+      },
+      {
+        "account": "767397675128",
+        "rationale": "Sydney active app/identity/API/queues/data/buckets, with strong API/Cognito/AgentCore/ECR/Location billing. Virginia contains retained app/log/config buckets plus positive regional S3/CloudFront charges and active global-edge distribution; retain storage/global-edge quota coverage, without inventing Virginia compute."
+      },
+      {
+        "account": "817495191110",
+        "rationale": "No quota pollers currently exist. Do not create any. Archival/storage/DDB/SNS resources and billing exist, but new monitor creation is outside simple reconciliation."
+      },
+      {
+        "account": "832721970534",
+        "rationale": "Sydney22 app Lambda, two data tables, genuine app queues/topic and app/web/files buckets plus positive regional Lambda/S3/DDB charges qualify. Virginia no non-QM app/bucket; off. No SES/userpool/EventBridge workload is shown; do not retain these solely from generic Lambda heuristics."
+      }
+    ],
+    "accessGaps": [
+      {
+        "account": "254572619934",
+        "reason": "Existing organisation-role assumption denied; no changes or coverage claim."
+      }
+    ],
+    "preservation": "Preserve application/security alarms, alert routes, budgets, WAF/subscription settings and intentional pauses. Narrow only quota-monitor controls."
   }
 }
