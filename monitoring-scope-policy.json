@@ -222,6 +222,45 @@
     "inactiveRegionDiscoveryDisabled": true,
     "existingProtection": "Preserve native application/security/budget controls and intentionally paused schedules.",
     "pollerPolicyRequired": true,
-    "pollerAllowlistSource": "Exact allowedServices array for this account and region; serialize as JSON into MONITORED_SERVICE_ALLOWLIST."
+    "pollerAllowlistSource": "Exact allowedServices array for this account and region; serialize as JSON into MONITORED_SERVICE_ALLOWLIST.",
+    "eligibleRegions": [
+      "ap-southeast-2",
+      "us-east-1"
+    ],
+    "billingEvidenceRequired": true,
+    "billingEvidenceRule": "Require reviewed workload billing in the exact account and region before enabling monitoring; quota-monitor-only charges are not sufficient.",
+    "regionalBillingEvidence": {
+      "us-east-1": {
+        "account": "057193910852",
+        "region": "us-east-1",
+        "source": "AWS Cost Explorer",
+        "observedAt": "2026-11-13",
+        "period": {
+          "start": "2026-10-01",
+          "endExclusive": "2026-11-13"
+        },
+        "excludedRecordTypes": [
+          "Credit",
+          "Refund"
+        ],
+        "estimatedByMonth": {
+          "2026-10": false,
+          "2026-11": true
+        },
+        "monitorOnly": false,
+        "workloadServices": [
+          {
+            "service": "Amazon API Gateway",
+            "amountUsd": "0.001465",
+            "workloadEvidence": "Live OrderRidge HTTP API in us-east-1, corroborated by account workload inventory."
+          },
+          {
+            "service": "Amazon Simple Email Service",
+            "amountUsd": "0.00816",
+            "workloadEvidence": "Live OrderRidge Cognito mail integration in us-east-1, corroborated by account workload inventory."
+          }
+        ]
+      }
+    }
   }
 }
